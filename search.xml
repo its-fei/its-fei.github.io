@@ -4,6 +4,29 @@
   
     
     <entry>
+      <title>认识和使用minio</title>
+      <link href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/"/>
+      <url>/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/</url>
+      
+        <content type="html"><![CDATA[<h3 id="什么是minio"><a href="#什么是minio" class="headerlink" title="什么是minio?"></a>什么是minio?</h3><p>minio 是一个基于Apache License v2.0开源协议的轻量对象存储服务，兼容亚马逊S3接口，号称目前速度最快，在标准硬件上，对象存储的读&#x2F;写速度最高可以高达183 GB&#x2F;s和171 GB&#x2F;s。</p><p>官网文档地址：<a href="https://docs.min.io/cn/">https://docs.min.io/cn/</a></p><h3 id="部署使用minio服务端"><a href="#部署使用minio服务端" class="headerlink" title="部署使用minio服务端"></a>部署使用minio服务端</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#下载Minio服务器二进制文件</span><br><span class="line">wget https://dl.min.io/server/minio/release/linux-amd64/minio</span><br><span class="line">chmod +x minio</span><br><span class="line">mv minio /usr/local/bin/</span><br><span class="line">#创建存储目录</span><br><span class="line">mkdir /mnt/data</span><br><span class="line"></span><br><span class="line">#运行Minio服务器</span><br><span class="line">./minio server /mnt/data</span><br></pre></td></tr></table></figure><p>本次部署使用的服务器<code>内核版本为3.10.x.x</code>，开启服务后提示如下<code>信息及警告</code>：</p><p><img src="/../images/minio/minio_server.png" alt="image"></p><p>此时可以访问ui页面<code>http://127.0.0.1:9000</code>进行一些简单操作了！</p><p><img src="/../images/minio/minio_ui.png" alt="image"></p><h3 id="部署使用minio客户端"><a href="#部署使用minio客户端" class="headerlink" title="部署使用minio客户端"></a>部署使用minio客户端</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#下载Minio客户端二进制文件</span><br><span class="line">wget https://dl.min.io/client/mc/release/linux-amd64/mc</span><br><span class="line">chmod +x mc</span><br><span class="line">mv mc /usr/local/bin/</span><br><span class="line"></span><br><span class="line">#配置Minio客户端</span><br><span class="line">mc alias set &#x27;myminio&#x27; &#x27;http://192.168.247.141:9000&#x27; &#x27;minioadmin&#x27; &#x27;minioadmin&#x27;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#创建存储桶</span><br><span class="line">mc mb myminio/mybucket</span><br><span class="line"></span><br><span class="line">#上传文件</span><br><span class="line">mc cp /path/to/localfile myminio/mybucket</span><br><span class="line"></span><br><span class="line">#列出存储桶中的文件</span><br><span class="line">mc ls myminio/mybucket</span><br><span class="line"></span><br><span class="line"># 下载文件</span><br><span class="line">mc cp myminio/mybucket/remote-file /path/to/localdir</span><br><span class="line"></span><br><span class="line"># 删除文件</span><br><span class="line">mc rm myminio/mybucket/remote-file</span><br></pre></td></tr></table></figure><p>至此可以初步认识和操作minio了，未完待续！</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> Minio </tag>
+            
+            <tag> 分布式 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>prometheus + grafana 监测ceph集群状态</title>
       <link href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/"/>
       <url>/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/</url>
