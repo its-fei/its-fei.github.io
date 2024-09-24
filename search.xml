@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>go test</title>
+      <link href="/2024/09/24/go-test/"/>
+      <url>/2024/09/24/go-test/</url>
+      
+        <content type="html"><![CDATA[<p><code>go test</code> 是 Go 语言的内置工具，用于自动化测试 Go 代码。</p><h3 id="1、测试文件结构"><a href="#1、测试文件结构" class="headerlink" title="1、测试文件结构"></a>1、测试文件结构</h3><ul><li><p><code>测试文件名</code>必须以 _test.go 结尾。例如：example_test.go。</p></li><li><p><code>测试函数名称</code>必须以 Test 开头，参数类型为 *testing.T</p></li></ul><h3 id="2、测试命令"><a href="#2、测试命令" class="headerlink" title="2、测试命令"></a>2、测试命令</h3><blockquote><p>在当前目录运行所有测试<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test</span><br></pre></td></tr></table></figure><br>运行特定的测试函数<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test -run Testfunc</span><br></pre></td></tr></table></figure><br>查看代码覆盖率<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test -cover</span><br></pre></td></tr></table></figure><br>生成详细的测试覆盖率报告<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go test -coverprofile=coverage.out</span><br><span class="line">go tool cover -func=coverage.out</span><br></pre></td></tr></table></figure></p></blockquote><h3 id="3、额外测试"><a href="#3、额外测试" class="headerlink" title="3、额外测试"></a>3、额外测试</h3><blockquote><p>基准测试</p></blockquote><p>基准测试函数以 Benchmark 开头，参数类型为 *testing.B </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test -bench=.</span><br></pre></td></tr></table></figure><blockquote><p>并发测试</p></blockquote><p>使用 Go 的 t.Parallel() 方法</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func TestAdd(t *testing.T) &#123;</span><br><span class="line">    t.Parallel()</span><br><span class="line">    result := Add(1, 2)</span><br><span class="line">    if result != 3 &#123;</span><br><span class="line">        t.Errorf(&quot;Add(1, 2) = %d; want 3&quot;, result)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><h3 id="4、其他常用标志"><a href="#4、其他常用标志" class="headerlink" title="4、其他常用标志"></a>4、其他常用标志</h3><blockquote><p>-timeout：设置测试的超时时间。例如，-timeout 30s。</p></blockquote><blockquote><p>-coverpkg：计算多个包的覆盖率。</p></blockquote><blockquote><p>-short：运行短测试，跳过长时间运行的测试。</p></blockquote><blockquote><p>-json：以 JSON 格式输出测试结果。</p></blockquote>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> go </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>JuiceFS元数据引擎PostgreSQL</title>
       <link href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/"/>
       <url>/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/</url>
