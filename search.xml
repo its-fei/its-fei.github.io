@@ -4,6 +4,29 @@
   
     
     <entry>
+      <title>juicefs元数据及数据存储方式</title>
+      <link href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/"/>
+      <url>/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/</url>
+      
+        <content type="html"><![CDATA[<h5 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h5><p>文件系统使用juicefs，元数据存储使用postgresql，数据存储使用minio</p><h5 id="问题？"><a href="#问题？" class="headerlink" title="问题？"></a>问题？</h5><p>通过juicefs写入一个文件，元数据在postgresql中是如何存储的？数据在minio中又是如何存储的？</p><p>新建 <code>file1、dir1/file1、dir1/file2</code>三个文件，大小分别为<code>4B 9B 13B</code></p><h5 id="在postgresql中"><a href="#在postgresql中" class="headerlink" title="在postgresql中"></a>在postgresql中</h5><p><code>jfs_node</code>表中记录着文件元数据信息</p><p><img src="/../images/juicefs_meta/jfs_node.png" alt="image"></p><p><code>jfs_chunk</code>表中记录着文件分片信息</p><p><img src="/../images/juicefs_meta/jfs_chunk.png" alt="image"></p><p>slices中可以看到存着一堆16进制代码，看看juicefs源码里slices的定义</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type Slice struct &#123;</span><br><span class="line">    Pos  uint32 // offset of the Slice in the Chunk</span><br><span class="line">    ID   uint64 // ID of the Slice, globally unique</span><br><span class="line">    Size uint32 // size of the Slice</span><br><span class="line">    Off  uint32 // offset of valid data in this Slice</span><br><span class="line">    Len  uint32 // size of valid data in this Slice</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>在二进制存储中，每2个十六进制字符代表1个字节</p><p>以slices <code>\x0000000000000000000000040000000d000000000000000d</code>举例</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">00000000          Slice 在 Chunk 中的偏移位置为0</span><br><span class="line">0000000000000004  Slice 的 ID，全局唯一（chunkid）转换为10进制数为4,</span><br><span class="line">0000000d          slice 的总大小为13</span><br><span class="line">00000000          有效数据在此 Slice 中的偏移位置</span><br><span class="line">0000000d          有效数据在此 Slice 中的大小为13</span><br></pre></td></tr></table></figure><p>由上可解析出slice的各部分信息，跟以下chunk_ref表中的数据也能够一一对应</p><p><code>jfs_chunk_ref</code>表中记录着文件分片补充信息</p><p><img src="/../images/juicefs_meta/jfs_chunk_ref.png" alt="image"></p><h5 id="在minio中"><a href="#在minio中" class="headerlink" title="在minio中"></a>在minio中</h5><p>可以看到具体的数据已经按照一定的层级存储到了minio中</p><p><img src="/../images/juicefs_meta/minio.png" alt="image"></p><blockquote><p>目录层级关系和名字看着很陌生，是以什么规则进行的呢？层级中的<code>chunks/0/0/</code>是怎么来的？对象名字<code>4_0_13</code>是怎么来的？</p></blockquote><p>查看源码得知，在<code>juicefs/pkg/chunk/cached_store.go</code>中</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (s *rSlice) key(indx int) string &#123;</span><br><span class="line">if s.store.conf.HashPrefix &#123;</span><br><span class="line">return fmt.Sprintf(&quot;chunks/%02X/%v/%v_%v_%v&quot;, s.id%256, s.id/1000/1000, s.id, indx, s.blockSize(indx))</span><br><span class="line">&#125;</span><br><span class="line">return fmt.Sprintf(&quot;chunks/%v/%v/%v_%v_%v&quot;, s.id/1000/1000, s.id/1000, s.id, indx, s.blockSize(indx))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>传入一个index字段，最终生成一个字符串类型的路径，HashPrefix是一个配置项，以chunk表中id为3的数据为例，slice解析后的id为4，index为0，所以会返回<code>chunks/0/0/,4_0_13</code>，也能够跟minio中的数据一一对应</p><p>至此已基本了解文件到对象的元数据集数据的存储方式</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Juicefs </tag>
+            
+            <tag> Minio </tag>
+            
+            <tag> Postgresql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>go test</title>
       <link href="/2024/09/24/go-test/"/>
       <url>/2024/09/24/go-test/</url>

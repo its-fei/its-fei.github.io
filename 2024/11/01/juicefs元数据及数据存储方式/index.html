@@ -13,7 +13,7 @@
   
   <title>
     
-      archive_a: 2024/8 
+      juicefs元数据及数据存储方式 
       
       
       |
@@ -104,104 +104,191 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">juicefs元数据及数据存储方式</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-11-01 17:12:13
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Juicefs/" title="Juicefs">
+                    #Juicefs
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Minio/" title="Minio">
+                    #Minio
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Postgresql/" title="Postgresql">
+                    #Postgresql
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h5 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h5><p>文件系统使用juicefs，元数据存储使用postgresql，数据存储使用minio</p>
+<h5 id="问题？"><a href="#问题？" class="headerlink" title="问题？"></a>问题？</h5><p>通过juicefs写入一个文件，元数据在postgresql中是如何存储的？数据在minio中又是如何存储的？</p>
+<p>新建 <code>file1、dir1/file1、dir1/file2</code>三个文件，大小分别为<code>4B 9B 13B</code></p>
+<h5 id="在postgresql中"><a href="#在postgresql中" class="headerlink" title="在postgresql中"></a>在postgresql中</h5><p><code>jfs_node</code>表中记录着文件元数据信息</p>
+<p><img src="/../images/juicefs_meta/jfs_node.png" alt="image"></p>
+<p><code>jfs_chunk</code>表中记录着文件分片信息</p>
+<p><img src="/../images/juicefs_meta/jfs_chunk.png" alt="image"></p>
+<p>slices中可以看到存着一堆16进制代码，看看juicefs源码里slices的定义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type Slice struct &#123;</span><br><span class="line">    Pos  uint32 // offset of the Slice in the Chunk</span><br><span class="line">    ID   uint64 // ID of the Slice, globally unique</span><br><span class="line">    Size uint32 // size of the Slice</span><br><span class="line">    Off  uint32 // offset of valid data in this Slice</span><br><span class="line">    Len  uint32 // size of valid data in this Slice</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在二进制存储中，每2个十六进制字符代表1个字节</p>
+<p>以slices <code>\x0000000000000000000000040000000d000000000000000d</code>举例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">00000000          Slice 在 Chunk 中的偏移位置为0</span><br><span class="line">0000000000000004  Slice 的 ID，全局唯一（chunkid）转换为10进制数为4,</span><br><span class="line">0000000d          slice 的总大小为13</span><br><span class="line">00000000          有效数据在此 Slice 中的偏移位置</span><br><span class="line">0000000d          有效数据在此 Slice 中的大小为13</span><br></pre></td></tr></table></figure>
+
+<p>由上可解析出slice的各部分信息，跟以下chunk_ref表中的数据也能够一一对应</p>
+<p><code>jfs_chunk_ref</code>表中记录着文件分片补充信息</p>
+<p><img src="/../images/juicefs_meta/jfs_chunk_ref.png" alt="image"></p>
+<h5 id="在minio中"><a href="#在minio中" class="headerlink" title="在minio中"></a>在minio中</h5><p>可以看到具体的数据已经按照一定的层级存储到了minio中</p>
+<p><img src="/../images/juicefs_meta/minio.png" alt="image"></p>
+<blockquote>
+<p>目录层级关系和名字看着很陌生，是以什么规则进行的呢？层级中的<code>chunks/0/0/</code>是怎么来的？对象名字<code>4_0_13</code>是怎么来的？</p>
+</blockquote>
+<p>查看源码得知，在<code>juicefs/pkg/chunk/cached_store.go</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func (s *rSlice) key(indx int) string &#123;</span><br><span class="line">	if s.store.conf.HashPrefix &#123;</span><br><span class="line">		return fmt.Sprintf(&quot;chunks/%02X/%v/%v_%v_%v&quot;, s.id%256, s.id/1000/1000, s.id, indx, s.blockSize(indx))</span><br><span class="line">	&#125;</span><br><span class="line">	return fmt.Sprintf(&quot;chunks/%v/%v/%v_%v_%v&quot;, s.id/1000/1000, s.id/1000, s.id, indx, s.blockSize(indx))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>传入一个index字段，最终生成一个字符串类型的路径，HashPrefix是一个配置项，以chunk表中id为3的数据为例，slice解析后的id为4，index为0，所以会返回<code>chunks/0/0/,4_0_13</code>，也能够跟minio中的数据一一对应</p>
+<p>至此已基本了解文件到对象的元数据集数据的存储方式</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2024/09/24/go-test/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-11-01 17:12:13
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Juicefs/" title="Juicefs">
+                        #Juicefs
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Minio/" title="Minio">
+                        #Minio
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Postgresql/" title="Postgresql">
+                        #Postgresql
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="juicefs元数据及数据存储方式">
-        <div class="time-m-d">11-01</div>
-        <div class="title">
-          <a href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/">
-            <span>juicefs元数据及数据存储方式</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="go test">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2024/09/24/go-test/">
-            <span>go test</span>
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83"><span class="toc-text">环境</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">问题？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8postgresql%E4%B8%AD"><span class="toc-text">在postgresql中</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8minio%E4%B8%AD"><span class="toc-text">在minio中</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="JuiceFS元数据引擎PostgreSQL">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/">
-            <span>JuiceFS元数据引擎PostgreSQL</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="使用nginx代理，实现扫描二维码查看静态网页功能">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E6%89%AB%E6%8F%8F%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%9F%A5%E7%9C%8B%E9%9D%99%E6%80%81%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%83%BD/">
-            <span>使用nginx代理，实现扫描二维码查看静态网页功能</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用JuiceFS">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8JuiceFS/">
-            <span>认识和使用JuiceFS</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用minio">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/">
-            <span>认识和使用minio</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="prometheus + grafana 监测ceph集群状态">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/">
-            <span>prometheus + grafana 监测ceph集群状态</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux网络流量问题排查-UDP丢包">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/Linux%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E4%B8%A2%E5%8C%85/">
-            <span>Linux网络流量问题排查-UDP丢包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ohh">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/ohh/">
-            <span>ohh</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -458,6 +545,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2024%2F11%2F01%2Fjuicefs%25E5%2585%2583%25E6%2595%25B0%25E6%258D%25AE%25E5%258F%258A%25E6%2595%25B0%25E6%258D%25AE%25E5%25AD%2598%25E5%2582%25A8%25E6%2596%25B9%25E5%25BC%258F%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
