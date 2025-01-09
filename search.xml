@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>了解Dockerfile，是什么？主要指令？如何使用？</title>
+      <link href="/2025/01/09/Dockerfile/"/>
+      <url>/2025/01/09/Dockerfile/</url>
+      
+        <content type="html"><![CDATA[<h4 id="Dockerfile是什么？"><a href="#Dockerfile是什么？" class="headerlink" title="Dockerfile是什么？"></a>Dockerfile是什么？</h4><p>Dockerfile 是一个文本文件，其中包含了一系列指令，用来自动化构建 Docker 镜像。它的主要作用就是定义一个 Docker 镜像的构建过程，包括镜像的基础镜像、安装的软件、设置的环境变量、暴露的端口、执行的命令等。</p><h4 id="主要指令有哪些？"><a href="#主要指令有哪些？" class="headerlink" title="主要指令有哪些？"></a>主要指令有哪些？</h4><h5 id="1、FROM：指定基础镜像。"><a href="#1、FROM：指定基础镜像。" class="headerlink" title="1、FROM：指定基础镜像。"></a>1、FROM：指定基础镜像。</h5><p><code>FROM ubuntu:20.04</code>，表示使用 ubuntu 20.04 作为基础镜像。</p><h5 id="2、RUN：在镜像构建过程中执行命令（通常用于安装软件）。"><a href="#2、RUN：在镜像构建过程中执行命令（通常用于安装软件）。" class="headerlink" title="2、RUN：在镜像构建过程中执行命令（通常用于安装软件）。"></a>2、RUN：在镜像构建过程中执行命令（通常用于安装软件）。</h5><p><code>RUN apt-get update &amp;&amp; apt-get install -y curl</code>，表示在镜像中安装 curl 软件。</p><h5 id="3、COPY-ADD：将文件从本地复制到镜像中。"><a href="#3、COPY-ADD：将文件从本地复制到镜像中。" class="headerlink" title="3、COPY &#x2F; ADD：将文件从本地复制到镜像中。"></a>3、COPY &#x2F; ADD：将文件从本地复制到镜像中。</h5><p><code>COPY ./myapp /app</code>，表示将当前目录下的 myapp 文件夹复制到镜像中的 &#x2F;app 目录。</p><h5 id="4、WORKDIR：设置工作目录，后续的命令都会在该目录下执行。"><a href="#4、WORKDIR：设置工作目录，后续的命令都会在该目录下执行。" class="headerlink" title="4、WORKDIR：设置工作目录，后续的命令都会在该目录下执行。"></a>4、WORKDIR：设置工作目录，后续的命令都会在该目录下执行。</h5><p><code>WORKDIR /app</code>，设置工作目录为 &#x2F;app。</p><h5 id="5、EXPOSE：暴露容器的端口，供外部访问。"><a href="#5、EXPOSE：暴露容器的端口，供外部访问。" class="headerlink" title="5、EXPOSE：暴露容器的端口，供外部访问。"></a>5、EXPOSE：暴露容器的端口，供外部访问。</h5><p><code>EXPOSE 8080</code>，表示容器会监听 8080 端口。</p><h5 id="6、CMD-ENTRYPOINTCMD-ENTRYPOINT：指定容器启动时执行的命令。"><a href="#6、CMD-ENTRYPOINTCMD-ENTRYPOINT：指定容器启动时执行的命令。" class="headerlink" title="6、CMD &#x2F; ENTRYPOINTCMD &#x2F; ENTRYPOINT：指定容器启动时执行的命令。"></a>6、CMD &#x2F; ENTRYPOINTCMD &#x2F; ENTRYPOINT：指定容器启动时执行的命令。</h5><p>是容器启动时的默认命令，但可以被 docker run 覆盖；ENTRYPOINT 是容器启动时的强制命令。</p><p><code>CMD [&quot;python&quot;, &quot;app.py&quot;]</code>，表示容器启动时会执行 python app.py。</p><h4 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t ImgName .</span><br></pre></td></tr></table></figure><ul><li><p><code>-t ImgName</code> -t 是 tag 的缩写，用来为新构建的镜像命名和打标签。在这里，ImgName 就是你要给这个镜像命名的名称。</p></li><li><p><code>.</code>  这个点（.）表示当前目录。Docker 将从这个目录下的 Dockerfile 文件开始构建镜像。</p></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> docker </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>如何理解 AI 对话中的 Token？</title>
       <link href="/2024/12/06/AiToken/"/>
       <url>/2024/12/06/AiToken/</url>
