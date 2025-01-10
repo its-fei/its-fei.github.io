@@ -13,7 +13,7 @@
   
   <title>
     
-      归档 
+      离线服务器迁移安装docker镜像 
       
       
       |
@@ -104,147 +104,163 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2025</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">离线服务器迁移安装docker镜像</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-01-10 17:12:35
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/docker/" title="docker">
+                    #docker
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h4 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h4><p>服务器需要使用容器，但是服务器是离线状态，或者无法直接拉取docker镜像，这时候就需要本篇文章了</p>
+<h4 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h4><h5 id="步骤-1-将镜像导出为-tar-文件"><a href="#步骤-1-将镜像导出为-tar-文件" class="headerlink" title="步骤 1: 将镜像导出为 tar 文件"></a>步骤 1: 将镜像导出为 tar 文件</h5><p>首先，在在线服务器上将镜像导出为一个 .tar 文件。你可以使用 docker save 命令来将镜像导出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o /path/to/your-image.tar your-image:tag</span><br></pre></td></tr></table></figure>
+<p><code>/path/to/your-image.tar</code> 是你要保存镜像文件的路径。</p>
+<p><code>your-image:tag</code> 是你要导出的镜像名称和标签（例如：ubuntu:20.04）。</p>
+<h5 id="步骤-2-将镜像文件传输到离线服务器"><a href="#步骤-2-将镜像文件传输到离线服务器" class="headerlink" title="步骤 2: 将镜像文件传输到离线服务器"></a>步骤 2: 将镜像文件传输到离线服务器</h5><p>将导出的 .tar 文件从在线服务器传输到离线服务器。可以使用任何支持文件传输的工具，如 scp、rsync、USB 存储等。</p>
+<p>如果你有 SSH 访问权限，可以使用 scp 命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /path/to/your-image.tar user@offline-server:/path/to/destination/</span><br></pre></td></tr></table></figure>
+<p><code>/path/to/your-image.tar</code> 是本地文件路径。</p>
+<p><code>user@offline-server:/path/to/destination/</code> 是离线服务器的目标路径。</p>
+<h5 id="步骤-3-在离线服务器上加载镜像"><a href="#步骤-3-在离线服务器上加载镜像" class="headerlink" title="步骤 3: 在离线服务器上加载镜像"></a>步骤 3: 在离线服务器上加载镜像</h5><p>在离线服务器上使用 docker load 命令将镜像加载到 Docker 中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i /path/to/your-image.tar</span><br></pre></td></tr></table></figure>
+<p><code>/path/to/your-image.tar</code> 是传输过来的镜像文件路径。</p>
+<p>加载成功后，你可以使用 docker images 命令查看是否成功导入镜像。</p>
+<h5 id="步骤-4-启动容器"><a href="#步骤-4-启动容器" class="headerlink" title="步骤 4: 启动容器"></a>步骤 4: 启动容器</h5><p>一旦镜像成功加载，你就可以使用 docker run 启动容器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name my-container your-image:tag</span><br></pre></td></tr></table></figure>
+<p><code>-d</code> 参数是让容器在后台运行。</p>
+<p><code>--name my-container</code> 是容器的名称。</p>
+<p><code>your-image:tag</code> 是加载的镜像名称和标签。</p>
+<h5 id="步骤-5-验证容器是否启动"><a href="#步骤-5-验证容器是否启动" class="headerlink" title="步骤 5: 验证容器是否启动"></a>步骤 5: 验证容器是否启动</h5><p>使用以下命令查看容器是否成功启动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<p>如果容器正在运行，它会出现在列表中。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、使用 docker save 命令将镜像导出为 .tar 文件。<br>2、使用 scp 或其他方式将 .tar 文件传输到离线服务器。<br>3、在离线服务器上使用 docker load 命令加载镜像。<br>4、使用 docker run 命令启动容器。<br>5、这样你就可以成功将镜像从在线服务器迁移到离线服务器并启动容器。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/01/09/Dockerfile/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-01-10 17:12:35
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/docker/" title="docker">
+                        #docker
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="离线服务器迁移安装docker镜像">
-        <div class="time-m-d">01-10</div>
-        <div class="title">
-          <a href="/2025/01/10/moveImg/">
-            <span>离线服务器迁移安装docker镜像</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="了解Dockerfile，是什么？主要指令？如何使用？">
-        <div class="time-m-d">01-09</div>
-        <div class="title">
-          <a href="/2025/01/09/Dockerfile/">
-            <span>了解Dockerfile，是什么？主要指令？如何使用？</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
-        </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
       
-      <div class="post-item" title="如何理解 AI 对话中的 Token？">
-        <div class="time-m-d">12-06</div>
-        <div class="title">
-          <a href="/2024/12/06/AiToken/">
-            <span>如何理解 AI 对话中的 Token？</span>
-          </a>
-        </div>
-      </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF"><span class="toc-text">场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4"><span class="toc-text">步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1-%E5%B0%86%E9%95%9C%E5%83%8F%E5%AF%BC%E5%87%BA%E4%B8%BA-tar-%E6%96%87%E4%BB%B6"><span class="toc-text">步骤 1: 将镜像导出为 tar 文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2-%E5%B0%86%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%88%B0%E7%A6%BB%E7%BA%BF%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">步骤 2: 将镜像文件传输到离线服务器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3-%E5%9C%A8%E7%A6%BB%E7%BA%BF%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E5%8A%A0%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="toc-text">步骤 3: 在离线服务器上加载镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-4-%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-text">步骤 4: 启动容器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-5-%E9%AA%8C%E8%AF%81%E5%AE%B9%E5%99%A8%E6%98%AF%E5%90%A6%E5%90%AF%E5%8A%A8"><span class="toc-text">步骤 5: 验证容器是否启动</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="内核ceph_mount流程">
-        <div class="time-m-d">11-21</div>
-        <div class="title">
-          <a href="/2024/11/21/ceph-mount%E5%86%85%E6%A0%B8%E6%B5%81%E7%A8%8B/">
-            <span>内核ceph_mount流程</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="juicefs元数据及数据存储方式">
-        <div class="time-m-d">11-01</div>
-        <div class="title">
-          <a href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/">
-            <span>juicefs元数据及数据存储方式</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go test">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2024/09/24/go-test/">
-            <span>go test</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JuiceFS元数据引擎PostgreSQL">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/">
-            <span>JuiceFS元数据引擎PostgreSQL</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="使用nginx代理，实现扫描二维码查看静态网页功能">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E6%89%AB%E6%8F%8F%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%9F%A5%E7%9C%8B%E9%9D%99%E6%80%81%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%83%BD/">
-            <span>使用nginx代理，实现扫描二维码查看静态网页功能</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用JuiceFS">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8JuiceFS/">
-            <span>认识和使用JuiceFS</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用minio">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/">
-            <span>认识和使用minio</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="prometheus + grafana 监测ceph集群状态">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/">
-            <span>prometheus + grafana 监测ceph集群状态</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux网络流量问题排查-UDP丢包">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/Linux%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E4%B8%A2%E5%8C%85/">
-            <span>Linux网络流量问题排查-UDP丢包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ohh">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/ohh/">
-            <span>ohh</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -501,6 +517,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E7%A6%BB%E7%BA%BF%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%81%E7%A7%BB%E5%AE%89%E8%A3%85docker%E9%95%9C%E5%83%8F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F01%2F10%2FmoveImg%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/01/10/moveImg/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
