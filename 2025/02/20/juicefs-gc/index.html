@@ -153,7 +153,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-02-20 14:53:36
+          2025-02-20 15:09:03
         </span>
         
               <span class="post-tags">
@@ -175,6 +175,13 @@
 <h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p><code>juicefs gc --delete $META-URL </code></p>
 <p>忘记格式可以参考 (postgres:&#x2F;&#x2F;juicefs:****@localhost:5432&#x2F;bucket6)</p>
 <p><img src="/../images/juicefs-gc/juicefs_gc.png" alt="image"><br>再次查看就很清爽了</p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p><code>--delete</code>这个选项会真正删除标记为垃圾的数据。默认情况下，juicefs gc 只会标记垃圾数据，而不会立即删除它们。</p>
+<p><code>--threads</code>这个选项允许你指定垃圾回收的线程数。增加线程数可以提高垃圾回收的速度，但也会消耗更多的系统资源。</p>
+<p><code>--dry-run</code>这个选项允许你进行一次“干运行”，即只列出将被删除的文件，而不实际删除它们。这对于预览垃圾回收的结果非常有用。</p>
+<p><code>--min-age</code> 这个选项允许你指定被认为是垃圾数据的最小年龄。例如，–min-age&#x3D;7d 表示只有超过 7 天没有被访问的数据才会被认为是垃圾数据。</p>
+<p>例如：想删除所有超过 7 天没有被访问的垃圾数据，并使用 4 个线程进行垃圾回收,可以这样写</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">juicefs gc --delete --threads=4 --min-age=7d $META-URL</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：在运行 juicefs gc 命令之前，建议先使用 –dry-run 选项进行一次“干运行”，以确保你知道哪些数据将被删除。</p>
 
       </div>
       
@@ -190,7 +197,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-02-20 14:53:36
+              2025-02-20 15:09:03
             </span>
             
                   <span class="post-tags">
@@ -219,7 +226,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%9B%A0"><span class="toc-text">起因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-text">原因</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E5%9B%9E%E6%94%B6%E7%AB%99%E5%8A%9F%E8%83%BD%EF%BC%9A"><span class="toc-text">1、回收站功能：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E5%BC%82%E6%AD%A5%E5%88%A0%E9%99%A4%EF%BC%9A"><span class="toc-text">2、异步删除：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%9B%A0"><span class="toc-text">起因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-text">原因</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E5%9B%9E%E6%94%B6%E7%AB%99%E5%8A%9F%E8%83%BD%EF%BC%9A"><span class="toc-text">1、回收站功能：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E5%BC%82%E6%AD%A5%E5%88%A0%E9%99%A4%EF%BC%9A"><span class="toc-text">2、异步删除：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A5%E5%85%85"><span class="toc-text">补充</span></a></li></ol>
       
     </div>
   </div>
