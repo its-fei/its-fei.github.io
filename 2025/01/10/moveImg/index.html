@@ -153,7 +153,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-01-10 17:12:35
+          2025-02-24 16:10:13
         </span>
         
               <span class="post-tags">
@@ -174,6 +174,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o /path/to/your-image.tar your-image:tag</span><br></pre></td></tr></table></figure>
 <p><code>/path/to/your-image.tar</code> 是你要保存镜像文件的路径。</p>
 <p><code>your-image:tag</code> 是你要导出的镜像名称和标签（例如：ubuntu:20.04）。</p>
+<p><strong>补充：</strong></p>
+<p>如果想要将正在运行的容器打包成镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker commit my_container my_new_image:v1.0</span><br><span class="line"># 其中：</span><br><span class="line"># my_container 是容器的名称或 ID。</span><br><span class="line"># my_new_image 是新镜像的名称。</span><br><span class="line"># v1.0 是镜像的标签（可选）。</span><br><span class="line"># 其他选项</span><br><span class="line"># -a, --author string：指定镜像的作者。</span><br><span class="line"># -m, --message string：添加镜像的提交信息。</span><br></pre></td></tr></table></figure>
+
 <h5 id="步骤-2-将镜像文件传输到离线服务器"><a href="#步骤-2-将镜像文件传输到离线服务器" class="headerlink" title="步骤 2: 将镜像文件传输到离线服务器"></a>步骤 2: 将镜像文件传输到离线服务器</h5><p>将导出的 .tar 文件从在线服务器传输到离线服务器。可以使用任何支持文件传输的工具，如 scp、rsync、USB 存储等。</p>
 <p>如果你有 SSH 访问权限，可以使用 scp 命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /path/to/your-image.tar user@offline-server:/path/to/destination/</span><br></pre></td></tr></table></figure>
@@ -207,7 +211,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-01-10 17:12:35
+              2025-02-24 16:10:13
             </span>
             
                   <span class="post-tags">
