@@ -13,7 +13,7 @@
   
   <title>
     
-      go fsnotify 监听程序无法捕获 vim 修改后的文件？ 
+      聊聊juicefs权限控制 
       
       
       |
@@ -149,19 +149,31 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">go fsnotify 监听程序无法捕获 vim 修改后的文件？</div>
+      <div class="post-title">聊聊juicefs权限控制</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-03-04 10:18:22
+          2025-03-11 09:57:26
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags mr-10" title="标签"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/go/" title="go">
-                    #go
+                  <a href="/tags/juicefs/" title="juicefs">
+                    #juicefs
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/minio/" title="minio">
+                    #minio
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/postgresql/" title="postgresql">
+                    #postgresql
                   </a>
                 </span>
                 
@@ -169,35 +181,58 @@
           
       </div>
       <div class="markdown-body">
-        <h4 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h4><p>当使用 echo 命令修改文件时，监听函数能够正常检测到文件修改事件并生效，但使用 vim 编辑并保存文件后，监听函数无法检测到修改事件</p>
-<h4 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h4><p>vim 在保存文件时，通常不会直接修改原始文件，而是通过以下步骤操作：</p>
-<ul>
-<li><p>1、创建一个临时文件，写入修改后的内容。</p>
+        <h3 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h3><p>项目使用juicefs作为文件系统对外提供服务，元数据存储在postgresql中，数据存储在minio中，同时minio也可以作为对象网关对外提供服务。有部分文件可能会有转储的需求，多用户操作自然会涉及到权限控制，想着了解一下</p>
+<h3 id="调研"><a href="#调研" class="headerlink" title="调研"></a>调研</h3><h4 id="一、文件存储"><a href="#一、文件存储" class="headerlink" title="一、文件存储"></a>一、文件存储</h4><h5 id="在-JuiceFS-挂载时启用-POSIX-ACL"><a href="#在-JuiceFS-挂载时启用-POSIX-ACL" class="headerlink" title="在 JuiceFS 挂载时启用 POSIX ACL"></a>在 JuiceFS 挂载时启用 POSIX ACL</h5><p>JuiceFS 默认启用UID／GID 自动映射，会与本地自动进行同步，此外 JuiceFS 支持 POSIX ACL，可以直接对用户和用户组设置更细粒度的权限。在经过网上查到的使用 <code>-o allow_other,acl</code> 参数挂载时碰壁。</p>
+<blockquote>
+<p><code>allow_other</code>参数：该选项允许其他用户（包括非挂载用户）访问挂载的文件系统，JuiceFS 依赖 FUSE（用户空间文件系统），所以需要安装fuse (centos参考: yum install -y fuse fuse-devel)，此外 <code>allow_other</code> 需要在 <code>/etc/fuse.conf</code> 中启用 <code>user_allow_other</code></p>
+</blockquote>
+<blockquote>
+<p><code>acl</code>参数：启动失败，报错大致是没这个选项! 找资料发现可以在<code>format</code>的时候加上<code>--enable-acl</code>来替代，此外<code>mount</code>时可以加的参数有<code>--enable-xattr</code></p>
+</blockquote>
+<p><code>acl</code> 选项允许使用 setfacl 和 getfacl 命令来管理 ACL 规则。</p>
+<h5 id="使用-setfacl-设定文件和目录权限"><a href="#使用-setfacl-设定文件和目录权限" class="headerlink" title="使用 setfacl 设定文件和目录权限"></a>使用 setfacl 设定文件和目录权限</h5><p>如果希望用户 user1 只能读取 &#x2F;mnt&#x2F;juicefs&#x2F;data 目录，不能删除或修改文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m u:user1:r-- /mnt/juicefs/data</span><br></pre></td></tr></table></figure>
+
+<p>或者禁止用户 user2 删除 &#x2F;mnt&#x2F;juicefs&#x2F;data&#x2F;file.txt：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m u:user2:-w /mnt/juicefs/data/file.txt</span><br></pre></td></tr></table></figure>
+
+<p>也可以针对组设定权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl -m g:group1:r-x /mnt/juicefs/data</span><br></pre></td></tr></table></figure>
+
+<h4 id="二、对象存储"><a href="#二、对象存储" class="headerlink" title="二、对象存储"></a>二、对象存储</h4><h5 id="配置-MinIO-的-IAM-策略（防止直接访问对象存储）"><a href="#配置-MinIO-的-IAM-策略（防止直接访问对象存储）" class="headerlink" title="配置 MinIO 的 IAM 策略（防止直接访问对象存储）"></a>配置 MinIO 的 IAM 策略（防止直接访问对象存储）</h5><p>对象网关部分用户、用户组权限本文暂未详述，可参考<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2415323">JuiceFS v1.2-beta1，Gateway 升级，多用户场景权限管理更灵活</a>！</p>
+<p>如果担心用户绕过 JuiceFS 直接访问 MinIO，可以配置 MinIO 的 IAM 策略，限制用户的 API 操作，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;Version&quot;: &quot;2025-01-01&quot;,</span><br><span class="line">  &quot;Statement&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;Effect&quot;: &quot;Deny&quot;,</span><br><span class="line">      &quot;Action&quot;: [&quot;s3:DeleteObject&quot;, &quot;s3:PutObject&quot;],</span><br><span class="line">      &quot;Resource&quot;: [&quot;arn:aws:s3:::juicefs-bucket/*&quot;],</span><br><span class="line">      &quot;Principal&quot;: &#123;&quot;AWS&quot;: [&quot;arn:aws:iam::account-id:user/user1&quot;]&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样 user1 无法通过 MinIO API 删除或上传对象。</p>
+<h3 id="三、postgresql数据库"><a href="#三、postgresql数据库" class="headerlink" title="三、postgresql数据库"></a>三、postgresql数据库</h3><h4 id="PostgreSQL-层面约束（限制元数据修改）"><a href="#PostgreSQL-层面约束（限制元数据修改）" class="headerlink" title="PostgreSQL 层面约束（限制元数据修改）"></a>PostgreSQL 层面约束（限制元数据修改）</h4><p>JuiceFS 依赖 PostgreSQL 存储元数据，如果不希望某些用户能修改 jfs_node 表中的数据，可以为 PostgreSQL 设定合适的权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REVOKE UPDATE, DELETE ON jfs_node FROM user1;</span><br></pre></td></tr></table></figure>
+<p>这样 user1 不能直接修改数据库中的元数据，防止通过 SQL 方式篡改文件系统信息。</p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><h4 id="setfacl使用"><a href="#setfacl使用" class="headerlink" title="setfacl使用"></a>setfacl使用</h4><ul>
+<li><p>为特定用户添加权限 <code>setfacl -m u:username:rw- /path/to/file</code>，为用户 username 设置对文件的读写权限。</p>
 </li>
-<li><p>2、删除原始文件。</p>
+<li><p>为特定组添加权限<code>setfacl -m g:groupname:r-x /path/to/file</code>，为组 groupname 设置读和执行权限。</p>
 </li>
-<li><p>3、将临时文件重命名为原始文件名。</p>
+<li><p>设置默认 ACL（目录） <code>setfacl -m d:u:username:rwx /path/to/dir</code>，新创建的文件或子目录将继承此权限。</p>
+</li>
+<li><p>递归设置 ACL <code>setfacl -R -m u:username:rwx /path/to/dir</code>，递归为目录及其所有内容设置权限。</p>
+</li>
+<li><p>删除特定 ACL 条目<code>setfacl -x u:username /path/to/file</code>，删除用户 username 的 ACL 条目。</p>
+</li>
+<li><p>删除所有扩展 ACL <code>setfacl -b /path/to/file</code>，删除所有扩展 ACL，仅保留基本 POSIX 权限。</p>
 </li>
 </ul>
-<p>这种操作方式可能导致文件监听工具（例如 Go 的 fsnotify 库）无法捕获到预期的写事件</p>
-<p>（fsnotify.Write），因为实际发生的事件可能是删除（fsnotify.Remove）或重命名</p>
-<p>（fsnotify.Rename），而不是简单的写入。</p>
-<h4 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h4><p>为了支持 vim 的修改行为，需要改进监听函数，使其不仅监听写事件，还能处理删除和重命名事件，并在文件被删除或重命名后重新添加监听。以下是具体步骤和实现：</p>
-<h5 id="1、扩展事件监听"><a href="#1、扩展事件监听" class="headerlink" title="1、扩展事件监听"></a>1、扩展事件监听</h5><p>除了监听写事件（fsnotify.Write），还需要监听：</p>
-<ul>
-<li><p>删除事件（fsnotify.Remove）：当原始文件被删除时触发。</p>
+<h4 id="getfacl使用"><a href="#getfacl使用" class="headerlink" title="getfacl使用"></a>getfacl使用</h4><ul>
+<li><p>查看文件 ACL <code>getfacl /path/to/file</code></p>
 </li>
-<li><p>重命名事件（fsnotify.Rename）：当临时文件被重命名为原始文件名时触发。</p>
+<li><p>查看目录 ACL <code>getfacl /path/to/dir</code></p>
 </li>
 </ul>
-<h4 id="2、重新添加监听"><a href="#2、重新添加监听" class="headerlink" title="2、重新添加监听"></a>2、重新添加监听</h4><p>当检测到文件被删除或重命名时，监听器会丢失对文件的跟踪。因此，需要在事件发生后重新将文件添加到监听器中，确保持续监控。</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/02/20/juicefs-gc/" target="_self">
+              <a href="/2025/03/04/go-fsnotify/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -206,15 +241,27 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-03-04 10:18:22
+              2025-03-11 09:57:26
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags mr-10" title="标签"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/go/" title="go">
-                        #go
+                      <a href="/tags/juicefs/" title="juicefs">
+                        #juicefs
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/minio/" title="minio">
+                        #minio
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/postgresql/" title="postgresql">
+                        #postgresql
                       </a>
                     </span>
                     
@@ -222,11 +269,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2025/03/11/juicefs-acl/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -240,7 +282,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">遇到的问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-text">原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="toc-text">如何解决</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E6%89%A9%E5%B1%95%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC"><span class="toc-text">1、扩展事件监听</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E9%87%8D%E6%96%B0%E6%B7%BB%E5%8A%A0%E7%9B%91%E5%90%AC"><span class="toc-text">2、重新添加监听</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%B7%E5%9B%A0"><span class="toc-text">起因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%A0%94"><span class="toc-text">调研</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8"><span class="toc-text">一、文件存储</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8-JuiceFS-%E6%8C%82%E8%BD%BD%E6%97%B6%E5%90%AF%E7%94%A8-POSIX-ACL"><span class="toc-text">在 JuiceFS 挂载时启用 POSIX ACL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-setfacl-%E8%AE%BE%E5%AE%9A%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90"><span class="toc-text">使用 setfacl 设定文件和目录权限</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8"><span class="toc-text">二、对象存储</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-MinIO-%E7%9A%84-IAM-%E7%AD%96%E7%95%A5%EF%BC%88%E9%98%B2%E6%AD%A2%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%EF%BC%89"><span class="toc-text">配置 MinIO 的 IAM 策略（防止直接访问对象存储）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81postgresql%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">三、postgresql数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PostgreSQL-%E5%B1%82%E9%9D%A2%E7%BA%A6%E6%9D%9F%EF%BC%88%E9%99%90%E5%88%B6%E5%85%83%E6%95%B0%E6%8D%AE%E4%BF%AE%E6%94%B9%EF%BC%89"><span class="toc-text">PostgreSQL 层面约束（限制元数据修改）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A5%E5%85%85"><span class="toc-text">补充</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#setfacl%E4%BD%BF%E7%94%A8"><span class="toc-text">setfacl使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#getfacl%E4%BD%BF%E7%94%A8"><span class="toc-text">getfacl使用</span></a></li></ol></li></ol>
       
     </div>
   </div>
@@ -528,12 +570,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + go%20fsnotify%20%E7%9B%91%E5%90%AC%E7%A8%8B%E5%BA%8F%E6%97%A0%E6%B3%95%E6%8D%95%E8%8E%B7%20vim%20%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%9F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F03%2F04%2Fgo-fsnotify%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E8%81%8A%E8%81%8Ajuicefs%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F03%2F11%2Fjuicefs-acl%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/03/04/go-fsnotify/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/03/11/juicefs-acl/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
