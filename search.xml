@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>驼峰命名（CamelCase）还是下划线命名（snake_case）</title>
+      <link href="/2025/04/14/naming-method/"/>
+      <url>/2025/04/14/naming-method/</url>
+      
+        <content type="html"><![CDATA[<h4 id="驼峰命名法"><a href="#驼峰命名法" class="headerlink" title="驼峰命名法"></a>驼峰命名法</h4><p>通过将单词的首字母大写（或仅首个单词后的单词首字母大写）来组合单词，不使用分隔符。例如，UserName 或 firstName。</p><p>根据首字母是否大写，分为：</p><ul><li><p>UpperCamelCase（如 UserName，也叫 PascalCase）：每个单词首字母大写。</p></li><li><p>lowerCamelCase（如 userName）：首单词小写，其余单词首字母大写。</p></li></ul><p>在数据库中，通常使用 UpperCamelCase 或 lowerCamelCase，但 <code>PostgreSQL 中大小写敏感性</code>会带来额外考虑。</p><h5 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h5><ul><li><p>大小写敏感：<br>在 PostgreSQL 中，未加双引号的标识符（如 UserName）会被自动转换为小写（username）。因此，驼峰命名的列名通常需要用双引号定义和查询</p></li><li><p>与 ORM 集成：<br>驼峰命名与 Java、JavaScript 等语言的变量名一致，ORM 框架（如 Hibernate、Sequelize）通常默认映射到 camelCase，减少配置工作。</p></li><li><p>长度：<br>驼峰命名不使用分隔符，列名稍短（例如 UserName 比 user_name 少 1 个字符）。</p></li></ul><h4 id="下划线命名法"><a href="#下划线命名法" class="headerlink" title="下划线命名法"></a>下划线命名法</h4><p>使用小写字母，并以 _ 作为单词之间的分隔符，例如 user_name 或 order_item_total_price。</p><p>通常全小写（snake_case），但在某些场景下可能使用大写（SNAKE_CASE，多见于常量或配置文件）。</p><h5 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h5><ul><li><p>大小写无关：<br>PostgreSQL 对未加双引号的标识符小写化处理，因此 user_name、USER_NAME 和 User_Name 在查询中是等价的，无需双引号</p></li><li><p>与 SQL 风格一致：<br>下划线命名与 SQL 关键字（如 order_by、group_by）风格一致，查询语句更自然。</p></li><li><p>长度：<br>由于下划线分隔符，列名略长，但对现代数据库的性能影响微乎其微。</p></li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>聊聊juicefs权限控制</title>
       <link href="/2025/03/11/juicefs-acl/"/>
       <url>/2025/03/11/juicefs-acl/</url>

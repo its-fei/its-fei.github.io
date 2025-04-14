@@ -13,7 +13,7 @@
   
   <title>
     
-      archive_a: 2025 
+      驼峰命名（CamelCase）还是下划线命名（snake_case） 
       
       
       |
@@ -104,183 +104,145 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2025</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">驼峰命名（CamelCase）还是下划线命名（snake_case）</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-04-14 14:11:29
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h4 id="驼峰命名法"><a href="#驼峰命名法" class="headerlink" title="驼峰命名法"></a>驼峰命名法</h4><p>通过将单词的首字母大写（或仅首个单词后的单词首字母大写）来组合单词，不使用分隔符。例如，UserName 或 firstName。</p>
+<p>根据首字母是否大写，分为：</p>
+<ul>
+<li><p>UpperCamelCase（如 UserName，也叫 PascalCase）：每个单词首字母大写。</p>
+</li>
+<li><p>lowerCamelCase（如 userName）：首单词小写，其余单词首字母大写。</p>
+</li>
+</ul>
+<p>在数据库中，通常使用 UpperCamelCase 或 lowerCamelCase，但 <code>PostgreSQL 中大小写敏感性</code>会带来额外考虑。</p>
+<h5 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h5><ul>
+<li><p>大小写敏感：<br>在 PostgreSQL 中，未加双引号的标识符（如 UserName）会被自动转换为小写（username）。因此，驼峰命名的列名通常需要用双引号定义和查询</p>
+</li>
+<li><p>与 ORM 集成：<br>驼峰命名与 Java、JavaScript 等语言的变量名一致，ORM 框架（如 Hibernate、Sequelize）通常默认映射到 camelCase，减少配置工作。</p>
+</li>
+<li><p>长度：<br>驼峰命名不使用分隔符，列名稍短（例如 UserName 比 user_name 少 1 个字符）。</p>
+</li>
+</ul>
+<h4 id="下划线命名法"><a href="#下划线命名法" class="headerlink" title="下划线命名法"></a>下划线命名法</h4><p>使用小写字母，并以 _ 作为单词之间的分隔符，例如 user_name 或 order_item_total_price。</p>
+<p>通常全小写（snake_case），但在某些场景下可能使用大写（SNAKE_CASE，多见于常量或配置文件）。</p>
+<h5 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h5><ul>
+<li><p>大小写无关：<br>PostgreSQL 对未加双引号的标识符小写化处理，因此 user_name、USER_NAME 和 User_Name 在查询中是等价的，无需双引号</p>
+</li>
+<li><p>与 SQL 风格一致：<br>下划线命名与 SQL 关键字（如 order_by、group_by）风格一致，查询语句更自然。</p>
+</li>
+<li><p>长度：<br>由于下划线分隔符，列名略长，但对现代数据库的性能影响微乎其微。</p>
+</li>
+</ul>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/03/11/juicefs-acl/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-04-14 14:11:29
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="驼峰命名（CamelCase）还是下划线命名（snake_case）">
-        <div class="time-m-d">04-14</div>
-        <div class="title">
-          <a href="/2025/04/14/naming-method/">
-            <span>驼峰命名（CamelCase）还是下划线命名（snake_case）</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="聊聊juicefs权限控制">
-        <div class="time-m-d">03-11</div>
-        <div class="title">
-          <a href="/2025/03/11/juicefs-acl/">
-            <span>聊聊juicefs权限控制</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go fsnotify 监听程序无法捕获 vim 修改后的文件？">
-        <div class="time-m-d">03-04</div>
-        <div class="title">
-          <a href="/2025/03/04/go-fsnotify/">
-            <span>go fsnotify 监听程序无法捕获 vim 修改后的文件？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="关于juicefs删除文件后仍然存在残留临时文件解决">
-        <div class="time-m-d">02-20</div>
-        <div class="title">
-          <a href="/2025/02/20/juicefs-gc/">
-            <span>关于juicefs删除文件后仍然存在残留临时文件解决</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="离线服务器迁移安装docker镜像">
-        <div class="time-m-d">01-10</div>
-        <div class="title">
-          <a href="/2025/01/10/moveImg/">
-            <span>离线服务器迁移安装docker镜像</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="了解Dockerfile，是什么？主要指令？如何使用？">
-        <div class="time-m-d">01-09</div>
-        <div class="title">
-          <a href="/2025/01/09/Dockerfile/">
-            <span>了解Dockerfile，是什么？主要指令？如何使用？</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
-        </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
       
-      <div class="post-item" title="如何理解 AI 对话中的 Token？">
-        <div class="time-m-d">12-06</div>
-        <div class="title">
-          <a href="/2024/12/06/AiToken/">
-            <span>如何理解 AI 对话中的 Token？</span>
-          </a>
-        </div>
-      </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A9%BC%E5%B3%B0%E5%91%BD%E5%90%8D%E6%B3%95"><span class="toc-text">驼峰命名法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8B%E5%88%92%E7%BA%BF%E5%91%BD%E5%90%8D%E6%B3%95"><span class="toc-text">下划线命名法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E6%80%A7-1"><span class="toc-text">特性</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="内核ceph_mount流程">
-        <div class="time-m-d">11-21</div>
-        <div class="title">
-          <a href="/2024/11/21/ceph-mount%E5%86%85%E6%A0%B8%E6%B5%81%E7%A8%8B/">
-            <span>内核ceph_mount流程</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="juicefs元数据及数据存储方式">
-        <div class="time-m-d">11-01</div>
-        <div class="title">
-          <a href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/">
-            <span>juicefs元数据及数据存储方式</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go test">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2024/09/24/go-test/">
-            <span>go test</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JuiceFS元数据引擎PostgreSQL">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/">
-            <span>JuiceFS元数据引擎PostgreSQL</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="使用nginx代理，实现扫描二维码查看静态网页功能">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E6%89%AB%E6%8F%8F%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%9F%A5%E7%9C%8B%E9%9D%99%E6%80%81%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%83%BD/">
-            <span>使用nginx代理，实现扫描二维码查看静态网页功能</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用JuiceFS">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8JuiceFS/">
-            <span>认识和使用JuiceFS</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用minio">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/">
-            <span>认识和使用minio</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="prometheus + grafana 监测ceph集群状态">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/">
-            <span>prometheus + grafana 监测ceph集群状态</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux网络流量问题排查-UDP丢包">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/Linux%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E4%B8%A2%E5%8C%85/">
-            <span>Linux网络流量问题排查-UDP丢包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ohh">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/ohh/">
-            <span>ohh</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -537,6 +499,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E9%A9%BC%E5%B3%B0%E5%91%BD%E5%90%8D%EF%BC%88CamelCase%EF%BC%89%E8%BF%98%E6%98%AF%E4%B8%8B%E5%88%92%E7%BA%BF%E5%91%BD%E5%90%8D%EF%BC%88snake_case%EF%BC%89 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F04%2F14%2Fnaming-method%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/04/14/naming-method/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
