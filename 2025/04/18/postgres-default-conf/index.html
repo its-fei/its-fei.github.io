@@ -13,7 +13,7 @@
   
   <title>
     
-      驼峰命名（CamelCase）还是下划线命名（snake_case） 
+      PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？ 
       
       
       |
@@ -149,49 +149,66 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">驼峰命名（CamelCase）还是下划线命名（snake_case）</div>
+      <div class="post-title">PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-04-14 14:11:29
+          2025-04-18 14:29:38
         </span>
         
       </div>
       <div class="markdown-body">
-        <h4 id="驼峰命名法"><a href="#驼峰命名法" class="headerlink" title="驼峰命名法"></a>驼峰命名法</h4><p>通过将单词的首字母大写（或仅首个单词后的单词首字母大写）来组合单词，不使用分隔符。例如，UserName 或 firstName。</p>
-<p>根据首字母是否大写，分为：</p>
+        <p>在使用 PostgreSQL 的过程中，会注意到数据库中存在 postgres 默认数据库，也有一些“奇怪”的表，比如、pg_* 开头的系统表，它们的作用是什么？全局配置、元数据到底存储在哪？</p>
+<h3 id="一、postgres-数据库是做什么的？"><a href="#一、postgres-数据库是做什么的？" class="headerlink" title="一、postgres 数据库是做什么的？"></a>一、postgres 数据库是做什么的？</h3><p>postgres 数据库是 PostgreSQL 安装后默认创建的一个数据库，它的名字来源于 PostgreSQL 的历史（PostgreSQL 原本叫 Postgres）。</p>
+<p>在安装 PostgreSQL 后，系统默认会创建三个数据库：</p>
 <ul>
-<li><p>UpperCamelCase（如 UserName，也叫 PascalCase）：每个单词首字母大写。</p>
+<li><p>postgres: 用作默认数据库，常用于测试连接或基本操作。</p>
 </li>
-<li><p>lowerCamelCase（如 userName）：首单词小写，其余单词首字母大写。</p>
+<li><p>template0: 系统模板数据库，不能修改，通常用于创建新数据库时的只读模板。</p>
 </li>
-</ul>
-<p>在数据库中，通常使用 UpperCamelCase 或 lowerCamelCase，但 <code>PostgreSQL 中大小写敏感性</code>会带来额外考虑。</p>
-<h5 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h5><ul>
-<li><p>大小写敏感：<br>在 PostgreSQL 中，未加双引号的标识符（如 UserName）会被自动转换为小写（username）。因此，驼峰命名的列名通常需要用双引号定义和查询</p>
-</li>
-<li><p>与 ORM 集成：<br>驼峰命名与 Java、JavaScript 等语言的变量名一致，ORM 框架（如 Hibernate、Sequelize）通常默认映射到 camelCase，减少配置工作。</p>
-</li>
-<li><p>长度：<br>驼峰命名不使用分隔符，列名稍短（例如 UserName 比 user_name 少 1 个字符）。</p>
+<li><p>template1: 系统模板数据库，用户创建新数据库时默认复制此模板。</p>
 </li>
 </ul>
-<h4 id="下划线命名法"><a href="#下划线命名法" class="headerlink" title="下划线命名法"></a>下划线命名法</h4><p>使用小写字母，并以 _ 作为单词之间的分隔符，例如 user_name 或 order_item_total_price。</p>
-<p>通常全小写（snake_case），但在某些场景下可能使用大写（SNAKE_CASE，多见于常量或配置文件）。</p>
-<h5 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h5><ul>
-<li><p>大小写无关：<br>PostgreSQL 对未加双引号的标识符小写化处理，因此 user_name、USER_NAME 和 User_Name 在查询中是等价的，无需双引号</p>
+<p>其中<code>postgres数据库</code>可以作为一个入口，供管理员连接到数据库集群以执行管理任务，例如创建其他数据库、用户或角色。</p>
+<h3 id="二、PostgreSQL-的系统表存储了什么？"><a href="#二、PostgreSQL-的系统表存储了什么？" class="headerlink" title="二、PostgreSQL 的系统表存储了什么？"></a>二、PostgreSQL 的系统表存储了什么？</h3><p>PostgreSQL 使用一组内置的“系统表”来管理数据库自身的元数据。这些表都以 pg_ 开头，位于 pg_catalog 模式（schema）下,他不属于任何一个数据库，可以通过如下命令查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT schemaname, tablename</span><br><span class="line">FROM pg_tables</span><br><span class="line">WHERE tableowner = &#x27;postgres&#x27; AND tablespace = &#x27;pg_global&#x27;;</span><br></pre></td></tr></table></figure>
+<p>下面是一些常见系统表的作用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pg_database	存储所有数据库的信息</span><br><span class="line">pg_user / pg_roles	存储用户和角色的定义</span><br><span class="line">pg_tables	所有用户表的列表（视图）</span><br><span class="line">pg_class	所有表、索引、序列等对象的元信息</span><br><span class="line">pg_attribute	存储每个表的字段信息</span><br><span class="line">pg_proc	存储函数（procedure/function）的定义</span><br><span class="line">pg_settings	当前数据库运行的参数配置（即 postgresql.conf 内容）</span><br><span class="line">pg_stat_activity	当前连接和活动会话的信息</span><br></pre></td></tr></table></figure>
+<h3 id="三、全局配置存储在哪？"><a href="#三、全局配置存储在哪？" class="headerlink" title="三、全局配置存储在哪？"></a>三、全局配置存储在哪？</h3><p>PostgreSQL 的参数配置大致分三类：</p>
+<p><strong>静态配置文件（无法通过 SQL 修改）</strong></p>
+<ul>
+<li><p>postgresql.conf：大多数运行参数，例如内存、日志等级等</p>
 </li>
-<li><p>与 SQL 风格一致：<br>下划线命名与 SQL 关键字（如 order_by、group_by）风格一致，查询语句更自然。</p>
+<li><p>pg_hba.conf：连接权限控制</p>
 </li>
-<li><p>长度：<br>由于下划线分隔符，列名略长，但对现代数据库的性能影响微乎其微。</p>
+<li><p>pg_ident.conf：用户映射</p>
 </li>
 </ul>
+<p><strong>动态运行参数（可以用 SQL 修改）</strong></p>
+<p>可以通过 SQL 语句 SHOW 查看、SET 修改</p>
+<p>全部参数都可以通过 pg_settings 表来查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, setting, unit, vartype, context, source FROM pg_settings;</span><br></pre></td></tr></table></figure>
+
+<p>修改参数方式（会话级）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET work_mem = &#x27;64MB&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>修改全局参数（永久生效）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER SYSTEM SET work_mem = &#x27;64MB&#x27;;</span><br><span class="line">SELECT pg_reload_conf(); -- 使其生效</span><br></pre></td></tr></table></figure>
+<p>修改后会写入 $PGDATA&#x2F;postgresql.auto.conf 文件。</p>
+<h3 id="四、如何查看这些系统表？"><a href="#四、如何查看这些系统表？" class="headerlink" title="四、如何查看这些系统表？"></a>四、如何查看这些系统表？</h3><p>通过 SQL 查询系统表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">-- 查看所有数据库</span><br><span class="line">SELECT * FROM pg_database;</span><br><span class="line"></span><br><span class="line">-- 查看当前数据库中的表</span><br><span class="line">SELECT * FROM pg_tables WHERE schemaname NOT IN (&#x27;pg_catalog&#x27;, &#x27;information_schema&#x27;);</span><br><span class="line"></span><br><span class="line">-- 查看所有配置参数</span><br><span class="line">SELECT * FROM pg_settings;</span><br><span class="line"></span><br><span class="line">-- 当前连接会话信息</span><br><span class="line">SELECT * FROM pg_stat_activity;</span><br></pre></td></tr></table></figure>
+
+<p>使用 psql 命令行工具中的元命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\l      -- 列出所有数据库</span><br><span class="line">\d      -- 列出当前数据库中的表</span><br><span class="line">\du     -- 列出所有用户</span><br><span class="line">\conninfo  -- 查看当前连接信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、系统表是否可以修改？"><a href="#五、系统表是否可以修改？" class="headerlink" title="五、系统表是否可以修改？"></a>五、系统表是否可以修改？</h3><p>一般来说，PostgreSQL 的系统表不建议直接修改，因为它们承载了数据库的结构定义,直接 UPDATE 或 DELETE 系统表可能会导致数据库崩溃或无法启动,但可以读取、查询这些表，深入理解数据库的运行机制。</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/03/11/juicefs-acl/" target="_self">
+              <a href="/2025/04/14/naming-method/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -200,16 +217,11 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-04-14 14:11:29
+              2025-04-18 14:29:38
             </span>
             
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2025/04/18/postgres-default-conf/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -223,7 +235,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A9%BC%E5%B3%B0%E5%91%BD%E5%90%8D%E6%B3%95"><span class="toc-text">驼峰命名法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8B%E5%88%92%E7%BA%BF%E5%91%BD%E5%90%8D%E6%B3%95"><span class="toc-text">下划线命名法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E6%80%A7-1"><span class="toc-text">特性</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81postgres-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%98%AF%E5%81%9A%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%9F"><span class="toc-text">一、postgres 数据库是做什么的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81PostgreSQL-%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%A1%A8%E5%AD%98%E5%82%A8%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">二、PostgreSQL 的系统表存储了什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE%E5%AD%98%E5%82%A8%E5%9C%A8%E5%93%AA%EF%BC%9F"><span class="toc-text">三、全局配置存储在哪？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E8%BF%99%E4%BA%9B%E7%B3%BB%E7%BB%9F%E8%A1%A8%EF%BC%9F"><span class="toc-text">四、如何查看这些系统表？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%B3%BB%E7%BB%9F%E8%A1%A8%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E4%BF%AE%E6%94%B9%EF%BC%9F"><span class="toc-text">五、系统表是否可以修改？</span></a></li></ol>
       
     </div>
   </div>
@@ -511,12 +523,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E9%A9%BC%E5%B3%B0%E5%91%BD%E5%90%8D%EF%BC%88CamelCase%EF%BC%89%E8%BF%98%E6%98%AF%E4%B8%8B%E5%88%92%E7%BA%BF%E5%91%BD%E5%90%8D%EF%BC%88snake_case%EF%BC%89 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F04%2F14%2Fnaming-method%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + PostgreSQL%20%E4%B8%AD%E7%9A%84%E2%80%9Cpostgres%E2%80%9D%E6%95%B0%E6%8D%AE%E5%BA%93%E6%98%AF%E5%81%9A%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%9F%E7%B3%BB%E7%BB%9F%E8%A1%A8%E3%80%81%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE%E9%83%BD%E5%AD%98%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F04%2F18%2Fpostgres-default-conf%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/04/14/naming-method/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/04/18/postgres-default-conf/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
