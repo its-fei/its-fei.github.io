@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>为什么我抛弃了 Postman，转投 Hoppscotch？</title>
+      <link href="/2025/05/29/hoppscotch/"/>
+      <url>/2025/05/29/hoppscotch/</url>
+      
+        <content type="html"><![CDATA[<p>作为一名开发者，API 调试工具是我日常工作不可或缺的一部分。曾经，Postman 是我工作中的首选，但最近，我彻底切换到了 Hoppscotch。这篇文章简单聊聊我为什么做出这个决定。</p><p><a href="https://github.com/hoppscotch/hoppscotch">hoppscotch github仓库</a></p><p><a href="https://hoppscotch.io/">hoppscotch web版本</a></p><p><strong>1. 轻量、开源、速度快</strong><br>Postman 的确功能强大，但随着版本更新，它变得越来越臃肿，启动缓慢、占用内存多。<br>相比之下，Hoppscotch 是纯 Web 版（也有桌面版），开源、免费、界面简洁，打开浏览器就能用，几乎秒开，对我这种追求效率的人来说太友好了。</p><p><strong>2. 更好的跨平台体验</strong><br>Postman 桌面版虽然强大，但 Web 版体验一般。而 Hoppscotch 从一开始就是为 Web 打造的，PC、平板、甚至手机浏览器都能流畅运行，不需要额外安装。随时随地，只要有浏览器，就能调试接口，这让我感到非常自由。</p><p><strong>3. 开发者友好、极简主义设计</strong><br>Postman 近年来越来越偏向企业功能，团队协作、测试套件、监控等等，但这些我平时用得很少。Hoppscotch 的设计更专注于开发者日常最常用的 API 调试，界面干净、上手快、没有多余的负担。</p><p><strong>4. 开源社区和可扩展性</strong><br>作为开源工具，Hoppscotch 背后有活跃的社区和贡献者，这意味着它更加透明、可定制。我喜欢能参与到工具生态中、甚至自己动手修改和贡献的感觉，这也是 Postman 无法比拟的。</p><p><strong>5. 够用就是最好的</strong><br>对我来说，工具不是越多功能越好，而是恰到好处、专注核心需求。Hoppscotch 没有 Postman 那么多企业级功能，但对于个人开发者、自由职业者、小团队，它已经完全够用了。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？</title>
       <link href="/2025/04/18/postgres-default-conf/"/>
       <url>/2025/04/18/postgres-default-conf/</url>
