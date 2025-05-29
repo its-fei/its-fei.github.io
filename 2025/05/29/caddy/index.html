@@ -13,7 +13,7 @@
   
   <title>
     
-      archive_a: 2025/5 
+      为什么我抛弃了 Nginx，转投 Caddy？ 
       
       
       |
@@ -104,210 +104,213 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2025</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">为什么我抛弃了 Nginx，转投 Caddy？</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-05-29 14:25:19
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <p>作为一名后端开发、运维或架构师，Nginx 一直是我们手上的常用工具：反向代理、静态文件托管、负载均衡、SSL 终端……几乎一网打尽。</p>
+<p>但是，随着项目的演进、需求的变化、心态的变化，我发现 Nginx 渐渐有点“不合胃口”了。于是，我开始尝试 <strong>Caddy</strong>，并一步步把一些场景切换了过去。</p>
+<p>这篇文章，就是聊聊我为什么做出这个决定，<strong>以及 Caddy 更适合在哪些场景下</strong>。</p>
+<hr>
+<h2 id="Nginx-的问题：强大，但复杂、繁琐"><a href="#Nginx-的问题：强大，但复杂、繁琐" class="headerlink" title="Nginx 的问题：强大，但复杂、繁琐"></a>Nginx 的问题：强大，但复杂、繁琐</h2><p>Nginx 非常强大，尤其在大流量、高并发场景下，稳定可靠、性能优越。</p>
+<p>但随着时间推移，我发现：</p>
+<ul>
+<li>配置复杂：想加 HTTPS？得手动生成证书、写配置、定时续签。</li>
+<li>学习曲线高：配置语言不直观，新人需要花时间去学。</li>
+<li>动态需求弱：要容器发现、自动路由？得靠 Lua 脚本或第三方模块。</li>
+<li>扩展能力弱：插件生态有限，很多特性需要打补丁、手动折腾。</li>
+</ul>
+<p><strong>适用场景：</strong></p>
+<blockquote>
+<p> 企业级、高并发、大规模生产环境，需高度可控的负载均衡、精细调优。<br> 对性能和成熟度有极高要求的场合。<br> 需要复杂流量管控（如 A&#x2F;B 测试、灰度发布）的大型集群。</p>
+</blockquote>
+<hr>
+<h2 id="Caddy-的亮点：开箱即用、自动化、现代化"><a href="#Caddy-的亮点：开箱即用、自动化、现代化" class="headerlink" title="Caddy 的亮点：开箱即用、自动化、现代化"></a>Caddy 的亮点：开箱即用、自动化、现代化</h2><p>Caddy 是一款用 Go 编写的现代 Web 服务器，它主打“自动化”、“易用性”、“现代特性”，对比 Nginx，有这些核心优势：</p>
+<p><strong>自动 HTTPS</strong></p>
+<ul>
+<li>内置 Let’s Encrypt，自动申请、续签 SSL，完全免手工。  </li>
+<li>一行配置搞定 HTTPS，让网站更安全。</li>
+</ul>
+<p><strong>配置简洁直观</strong></p>
+<ul>
+<li>Caddyfile 配置极简（如 <code>reverse_proxy</code> 就能代理后端）。  </li>
+<li>支持 JSON 配置，适合自动化、代码生成。</li>
+</ul>
+<p><strong>插件生态强</strong></p>
+<ul>
+<li>活跃的插件系统，扩展性强。</li>
+<li>无需重编译、打补丁，直接使用社区插件。</li>
+</ul>
+<p><strong>动态服务发现友好</strong></p>
+<ul>
+<li>自动检测 Docker、Kubernetes 后端服务，动态热加载配置。  </li>
+<li>不用重启服务，变更秒生效。</li>
+</ul>
+<p><strong>现代协议支持</strong></p>
+<ul>
+<li>内置 HTTP&#x2F;2、HTTP&#x2F;3（QUIC）、TLS 1.3 支持，直接享受最新协议优势。</li>
+</ul>
+<p><strong>开源与商业版并行</strong></p>
+<ul>
+<li>免费开源可用，同时提供商业支持，灵活选择。</li>
+</ul>
+<hr>
+<h2 id="适用场景：Caddy-发挥优势的地方"><a href="#适用场景：Caddy-发挥优势的地方" class="headerlink" title="适用场景：Caddy 发挥优势的地方"></a>适用场景：Caddy 发挥优势的地方</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Nginx 表现</th>
+<th>Caddy 优势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>小型静态网站</strong></td>
+<td>配置繁琐（手工证书、复杂目录配置）</td>
+<td>自动 HTTPS、配置极简，几分钟上线</td>
+</tr>
+<tr>
+<td><strong>个人或小团队项目</strong></td>
+<td>大材小用、维护成本高</td>
+<td>易上手、零维护、轻量级</td>
+</tr>
+<tr>
+<td><strong>开发和测试环境</strong></td>
+<td>需要配置模板、反复调试</td>
+<td>即写即用，开发体验极佳</td>
+</tr>
+<tr>
+<td><strong>Docker&#x2F;K8s 微服务</strong></td>
+<td>需复杂脚本实现动态代理</td>
+<td>自动服务发现、动态配置</td>
+</tr>
+<tr>
+<td><strong>需要现代协议支持</strong></td>
+<td>需额外模块、手动配置</td>
+<td>原生支持 HTTP&#x2F;2、HTTP&#x2F;3</td>
+</tr>
+<tr>
+<td><strong>希望扩展能力强</strong></td>
+<td>插件少、生态小</td>
+<td>插件丰富、社区活跃</td>
+</tr>
+</tbody></table>
+<p><strong>总结一句话：</strong></p>
+<blockquote>
+<p><strong>Caddy 更适合小型项目、快速部署、容器化环境、现代化协议和自动化场景。</strong><br><strong>Nginx 更适合极高并发、超复杂流量场景下的生产级大规模集群。</strong></p>
+</blockquote>
+<h2 id="用更少的配置，做更多的事"><a href="#用更少的配置，做更多的事" class="headerlink" title="用更少的配置，做更多的事"></a>用更少的配置，做更多的事</h2><p>从 Nginx 到 Caddy，我感受到的不只是工具的切换，更是一种心态的转变：</p>
+<blockquote>
+<p>不再迷恋复杂，而是追求简洁；不再强调控制，而是拥抱自动化。</p>
+</blockquote>
+<p>如果你也厌倦了为 Nginx 写长长的配置文件、维护繁琐的证书，试试 Caddy，也许你会发现一个更清凉、更现代的世界。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/05/29/hoppscotch/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-05-29 14:25:19
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="为什么我抛弃了 Nginx，转投 Caddy？">
-        <div class="time-m-d">05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/caddy/">
-            <span>为什么我抛弃了 Nginx，转投 Caddy？</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="为什么我抛弃了 Postman，转投 Hoppscotch？">
-        <div class="time-m-d">05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/hoppscotch/">
-            <span>为什么我抛弃了 Postman，转投 Hoppscotch？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？">
-        <div class="time-m-d">04-18</div>
-        <div class="title">
-          <a href="/2025/04/18/postgres-default-conf/">
-            <span>PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="驼峰命名（CamelCase）还是下划线命名（snake_case）">
-        <div class="time-m-d">04-14</div>
-        <div class="title">
-          <a href="/2025/04/14/naming-method/">
-            <span>驼峰命名（CamelCase）还是下划线命名（snake_case）</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="聊聊juicefs权限控制">
-        <div class="time-m-d">03-11</div>
-        <div class="title">
-          <a href="/2025/03/11/juicefs-acl/">
-            <span>聊聊juicefs权限控制</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go fsnotify 监听程序无法捕获 vim 修改后的文件？">
-        <div class="time-m-d">03-04</div>
-        <div class="title">
-          <a href="/2025/03/04/go-fsnotify/">
-            <span>go fsnotify 监听程序无法捕获 vim 修改后的文件？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="关于juicefs删除文件后仍然存在残留临时文件解决">
-        <div class="time-m-d">02-20</div>
-        <div class="title">
-          <a href="/2025/02/20/juicefs-gc/">
-            <span>关于juicefs删除文件后仍然存在残留临时文件解决</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="离线服务器迁移安装docker镜像">
-        <div class="time-m-d">01-10</div>
-        <div class="title">
-          <a href="/2025/01/10/moveImg/">
-            <span>离线服务器迁移安装docker镜像</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="了解Dockerfile，是什么？主要指令？如何使用？">
-        <div class="time-m-d">01-09</div>
-        <div class="title">
-          <a href="/2025/01/09/Dockerfile/">
-            <span>了解Dockerfile，是什么？主要指令？如何使用？</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
-        </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
       
-      <div class="post-item" title="如何理解 AI 对话中的 Token？">
-        <div class="time-m-d">12-06</div>
-        <div class="title">
-          <a href="/2024/12/06/AiToken/">
-            <span>如何理解 AI 对话中的 Token？</span>
-          </a>
-        </div>
-      </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx-%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E5%BC%BA%E5%A4%A7%EF%BC%8C%E4%BD%86%E5%A4%8D%E6%9D%82%E3%80%81%E7%B9%81%E7%90%90"><span class="toc-text">Nginx 的问题：强大，但复杂、繁琐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Caddy-%E7%9A%84%E4%BA%AE%E7%82%B9%EF%BC%9A%E5%BC%80%E7%AE%B1%E5%8D%B3%E7%94%A8%E3%80%81%E8%87%AA%E5%8A%A8%E5%8C%96%E3%80%81%E7%8E%B0%E4%BB%A3%E5%8C%96"><span class="toc-text">Caddy 的亮点：开箱即用、自动化、现代化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9ACaddy-%E5%8F%91%E6%8C%A5%E4%BC%98%E5%8A%BF%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-text">适用场景：Caddy 发挥优势的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%9B%B4%E5%B0%91%E7%9A%84%E9%85%8D%E7%BD%AE%EF%BC%8C%E5%81%9A%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BA%8B"><span class="toc-text">用更少的配置，做更多的事</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="内核ceph_mount流程">
-        <div class="time-m-d">11-21</div>
-        <div class="title">
-          <a href="/2024/11/21/ceph-mount%E5%86%85%E6%A0%B8%E6%B5%81%E7%A8%8B/">
-            <span>内核ceph_mount流程</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="juicefs元数据及数据存储方式">
-        <div class="time-m-d">11-01</div>
-        <div class="title">
-          <a href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/">
-            <span>juicefs元数据及数据存储方式</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go test">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2024/09/24/go-test/">
-            <span>go test</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JuiceFS元数据引擎PostgreSQL">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/">
-            <span>JuiceFS元数据引擎PostgreSQL</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="使用nginx代理，实现扫描二维码查看静态网页功能">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E6%89%AB%E6%8F%8F%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%9F%A5%E7%9C%8B%E9%9D%99%E6%80%81%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%83%BD/">
-            <span>使用nginx代理，实现扫描二维码查看静态网页功能</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用JuiceFS">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8JuiceFS/">
-            <span>认识和使用JuiceFS</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用minio">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/">
-            <span>认识和使用minio</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="prometheus + grafana 监测ceph集群状态">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/">
-            <span>prometheus + grafana 监测ceph集群状态</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux网络流量问题排查-UDP丢包">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/Linux%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E4%B8%A2%E5%8C%85/">
-            <span>Linux网络流量问题排查-UDP丢包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ohh">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/ohh/">
-            <span>ohh</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -564,6 +567,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E6%8A%9B%E5%BC%83%E4%BA%86%20Nginx%EF%BC%8C%E8%BD%AC%E6%8A%95%20Caddy%EF%BC%9F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F05%2F29%2Fcaddy%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/05/29/caddy/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>

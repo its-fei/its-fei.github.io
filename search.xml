@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>为什么我抛弃了 Nginx，转投 Caddy？</title>
+      <link href="/2025/05/29/caddy/"/>
+      <url>/2025/05/29/caddy/</url>
+      
+        <content type="html"><![CDATA[<p>作为一名后端开发、运维或架构师，Nginx 一直是我们手上的常用工具：反向代理、静态文件托管、负载均衡、SSL 终端……几乎一网打尽。</p><p>但是，随着项目的演进、需求的变化、心态的变化，我发现 Nginx 渐渐有点“不合胃口”了。于是，我开始尝试 <strong>Caddy</strong>，并一步步把一些场景切换了过去。</p><p>这篇文章，就是聊聊我为什么做出这个决定，<strong>以及 Caddy 更适合在哪些场景下</strong>。</p><hr><h2 id="Nginx-的问题：强大，但复杂、繁琐"><a href="#Nginx-的问题：强大，但复杂、繁琐" class="headerlink" title="Nginx 的问题：强大，但复杂、繁琐"></a>Nginx 的问题：强大，但复杂、繁琐</h2><p>Nginx 非常强大，尤其在大流量、高并发场景下，稳定可靠、性能优越。</p><p>但随着时间推移，我发现：</p><ul><li>配置复杂：想加 HTTPS？得手动生成证书、写配置、定时续签。</li><li>学习曲线高：配置语言不直观，新人需要花时间去学。</li><li>动态需求弱：要容器发现、自动路由？得靠 Lua 脚本或第三方模块。</li><li>扩展能力弱：插件生态有限，很多特性需要打补丁、手动折腾。</li></ul><p><strong>适用场景：</strong></p><blockquote><p> 企业级、高并发、大规模生产环境，需高度可控的负载均衡、精细调优。<br> 对性能和成熟度有极高要求的场合。<br> 需要复杂流量管控（如 A&#x2F;B 测试、灰度发布）的大型集群。</p></blockquote><hr><h2 id="Caddy-的亮点：开箱即用、自动化、现代化"><a href="#Caddy-的亮点：开箱即用、自动化、现代化" class="headerlink" title="Caddy 的亮点：开箱即用、自动化、现代化"></a>Caddy 的亮点：开箱即用、自动化、现代化</h2><p>Caddy 是一款用 Go 编写的现代 Web 服务器，它主打“自动化”、“易用性”、“现代特性”，对比 Nginx，有这些核心优势：</p><p><strong>自动 HTTPS</strong></p><ul><li>内置 Let’s Encrypt，自动申请、续签 SSL，完全免手工。  </li><li>一行配置搞定 HTTPS，让网站更安全。</li></ul><p><strong>配置简洁直观</strong></p><ul><li>Caddyfile 配置极简（如 <code>reverse_proxy</code> 就能代理后端）。  </li><li>支持 JSON 配置，适合自动化、代码生成。</li></ul><p><strong>插件生态强</strong></p><ul><li>活跃的插件系统，扩展性强。</li><li>无需重编译、打补丁，直接使用社区插件。</li></ul><p><strong>动态服务发现友好</strong></p><ul><li>自动检测 Docker、Kubernetes 后端服务，动态热加载配置。  </li><li>不用重启服务，变更秒生效。</li></ul><p><strong>现代协议支持</strong></p><ul><li>内置 HTTP&#x2F;2、HTTP&#x2F;3（QUIC）、TLS 1.3 支持，直接享受最新协议优势。</li></ul><p><strong>开源与商业版并行</strong></p><ul><li>免费开源可用，同时提供商业支持，灵活选择。</li></ul><hr><h2 id="适用场景：Caddy-发挥优势的地方"><a href="#适用场景：Caddy-发挥优势的地方" class="headerlink" title="适用场景：Caddy 发挥优势的地方"></a>适用场景：Caddy 发挥优势的地方</h2><table><thead><tr><th>场景</th><th>Nginx 表现</th><th>Caddy 优势</th></tr></thead><tbody><tr><td><strong>小型静态网站</strong></td><td>配置繁琐（手工证书、复杂目录配置）</td><td>自动 HTTPS、配置极简，几分钟上线</td></tr><tr><td><strong>个人或小团队项目</strong></td><td>大材小用、维护成本高</td><td>易上手、零维护、轻量级</td></tr><tr><td><strong>开发和测试环境</strong></td><td>需要配置模板、反复调试</td><td>即写即用，开发体验极佳</td></tr><tr><td><strong>Docker&#x2F;K8s 微服务</strong></td><td>需复杂脚本实现动态代理</td><td>自动服务发现、动态配置</td></tr><tr><td><strong>需要现代协议支持</strong></td><td>需额外模块、手动配置</td><td>原生支持 HTTP&#x2F;2、HTTP&#x2F;3</td></tr><tr><td><strong>希望扩展能力强</strong></td><td>插件少、生态小</td><td>插件丰富、社区活跃</td></tr></tbody></table><p><strong>总结一句话：</strong></p><blockquote><p><strong>Caddy 更适合小型项目、快速部署、容器化环境、现代化协议和自动化场景。</strong><br><strong>Nginx 更适合极高并发、超复杂流量场景下的生产级大规模集群。</strong></p></blockquote><h2 id="用更少的配置，做更多的事"><a href="#用更少的配置，做更多的事" class="headerlink" title="用更少的配置，做更多的事"></a>用更少的配置，做更多的事</h2><p>从 Nginx 到 Caddy，我感受到的不只是工具的切换，更是一种心态的转变：</p><blockquote><p>不再迷恋复杂，而是追求简洁；不再强调控制，而是拥抱自动化。</p></blockquote><p>如果你也厌倦了为 Nginx 写长长的配置文件、维护繁琐的证书，试试 Caddy，也许你会发现一个更清凉、更现代的世界。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>为什么我抛弃了 Postman，转投 Hoppscotch？</title>
       <link href="/2025/05/29/hoppscotch/"/>
       <url>/2025/05/29/hoppscotch/</url>
