@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>worm存储机制</title>
+      <link href="/2025/06/10/worm-minio/"/>
+      <url>/2025/06/10/worm-minio/</url>
+      
+        <content type="html"><![CDATA[<h2 id="什么是-WORM？"><a href="#什么是-WORM？" class="headerlink" title="什么是 WORM？"></a>什么是 WORM？</h2><p>WORM，全称 Write Once Read Many，是一种防篡改存储策略。其核心特征是：对象一旦写入，就不能被修改或删除，直到达到预设的保留期（Retention Period）或者永不删除。</p><h2 id="为什么需要-WORM？"><a href="#为什么需要-WORM？" class="headerlink" title="为什么需要 WORM？"></a>为什么需要 WORM？</h2><p><strong>1.合规性要求</strong></p><p>金融行业要求审计日志不可篡改</p><p>医疗影像、患者记录需保存多年且保持完整性</p><p><strong>2.防止误删&#x2F;恶意删除</strong></p><p>即便管理员也不能轻易删除或覆盖数据</p><p><strong>3.数据长期归档</strong></p><p>冷数据存储，保障长期读取需求</p><h2 id="MinIO-中的-WORM-实现方式"><a href="#MinIO-中的-WORM-实现方式" class="headerlink" title="MinIO 中的 WORM 实现方式"></a>MinIO 中的 WORM 实现方式</h2><p>MinIO 的 WORM 功能基于 对象锁定机制（Object Locking），通过为对象设定不可变的保留时间，来确保其不可被覆盖或删除。</p><p>MinIO 支持两种 WORM 模式：</p><ul><li>Governance 治理模式：对象不可被删除或覆盖，但管理员拥有绕过权限</li><li>Compliance 合规模式：对象不可被任何人删除，即便是管理员，直到保留期结束</li></ul><h2 id="在-MinIO-上启用-WORM"><a href="#在-MinIO-上启用-WORM" class="headerlink" title="在 MinIO 上启用 WORM"></a>在 MinIO 上启用 WORM</h2><h3 id="1-创建支持对象锁定的桶"><a href="#1-创建支持对象锁定的桶" class="headerlink" title="1.创建支持对象锁定的桶"></a>1.创建支持对象锁定的桶</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc mb --with-lock local/worm-bucket</span><br></pre></td></tr></table></figure><p><code>--with-lock</code>参数必须在桶创建时指定<br>已存在的桶不能开启 WORM</p><h3 id="2-设置默认的-WORM-保留策略"><a href="#2-设置默认的-WORM-保留策略" class="headerlink" title="2.设置默认的 WORM 保留策略"></a>2.设置默认的 WORM 保留策略</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc retention set --default governance --days 30 local/worm-bucket</span><br></pre></td></tr></table></figure><p>新上传的对象将在默认保留期内（30 天）不可被删除或修改。</p><h3 id="3-上传文件测试"><a href="#3-上传文件测试" class="headerlink" title="3.上传文件测试"></a>3.上传文件测试</h3><figure class="highlight plaintext"><figcaption><span>alias set local</span><a href="http://127.0.0.1:9000">minioadmin minioadmin</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mc cp ./report.pdf local/worm-bucket/</span><br><span class="line">尝试删除对象将被拒绝：</span><br><span class="line">mc rm local/worm-bucket/report.pdf</span><br><span class="line"># Error: Object is under governance retention and cannot be deleted</span><br></pre></td></tr></table></figure><h3 id="4-管理员强制删除（仅适用于-Governance-模式）"><a href="#4-管理员强制删除（仅适用于-Governance-模式）" class="headerlink" title="4.管理员强制删除（仅适用于 Governance 模式）"></a>4.管理员强制删除（仅适用于 Governance 模式）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc rm --bypass-governance local/worm-bucket/report.pdf</span><br></pre></td></tr></table></figure><p>此操作需要管理员具备 S3 权限：s3:BypassGovernanceRetention</p><h3 id="5-Compliance-模式（不可绕过）"><a href="#5-Compliance-模式（不可绕过）" class="headerlink" title="5.Compliance 模式（不可绕过）"></a>5.Compliance 模式（不可绕过）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc retention set --default compliance --days 180 local/worm-bucket</span><br></pre></td></tr></table></figure><p>设置后，即使管理员也无法提前删除对象，只能等待保留期自动到期。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>为什么我抛弃了 Nginx，转投 Caddy？</title>
       <link href="/2025/05/29/caddy/"/>
       <url>/2025/05/29/caddy/</url>
@@ -184,9 +197,9 @@
       
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Ceph </tag>
+            
+            <tag> Linux </tag>
             
             <tag> Kernel </tag>
             

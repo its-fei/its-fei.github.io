@@ -13,7 +13,7 @@
   
   <title>
     
-      archive_a: 2025/2 
+      worm存储机制 
       
       
       |
@@ -104,219 +104,141 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2025</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">worm存储机制</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-06-10 11:17:16
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="什么是-WORM？"><a href="#什么是-WORM？" class="headerlink" title="什么是 WORM？"></a>什么是 WORM？</h2><p>WORM，全称 Write Once Read Many，是一种防篡改存储策略。其核心特征是：对象一旦写入，就不能被修改或删除，直到达到预设的保留期（Retention Period）或者永不删除。</p>
+<h2 id="为什么需要-WORM？"><a href="#为什么需要-WORM？" class="headerlink" title="为什么需要 WORM？"></a>为什么需要 WORM？</h2><p><strong>1.合规性要求</strong></p>
+<p>金融行业要求审计日志不可篡改</p>
+<p>医疗影像、患者记录需保存多年且保持完整性</p>
+<p><strong>2.防止误删&#x2F;恶意删除</strong></p>
+<p>即便管理员也不能轻易删除或覆盖数据</p>
+<p><strong>3.数据长期归档</strong></p>
+<p>冷数据存储，保障长期读取需求</p>
+<h2 id="MinIO-中的-WORM-实现方式"><a href="#MinIO-中的-WORM-实现方式" class="headerlink" title="MinIO 中的 WORM 实现方式"></a>MinIO 中的 WORM 实现方式</h2><p>MinIO 的 WORM 功能基于 对象锁定机制（Object Locking），通过为对象设定不可变的保留时间，来确保其不可被覆盖或删除。</p>
+<p>MinIO 支持两种 WORM 模式：</p>
+<ul>
+<li>Governance 治理模式：对象不可被删除或覆盖，但管理员拥有绕过权限</li>
+<li>Compliance 合规模式：对象不可被任何人删除，即便是管理员，直到保留期结束</li>
+</ul>
+<h2 id="在-MinIO-上启用-WORM"><a href="#在-MinIO-上启用-WORM" class="headerlink" title="在 MinIO 上启用 WORM"></a>在 MinIO 上启用 WORM</h2><h3 id="1-创建支持对象锁定的桶"><a href="#1-创建支持对象锁定的桶" class="headerlink" title="1.创建支持对象锁定的桶"></a>1.创建支持对象锁定的桶</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc mb --with-lock local/worm-bucket</span><br></pre></td></tr></table></figure>
+<p><code>--with-lock</code>参数必须在桶创建时指定<br>已存在的桶不能开启 WORM</p>
+<h3 id="2-设置默认的-WORM-保留策略"><a href="#2-设置默认的-WORM-保留策略" class="headerlink" title="2.设置默认的 WORM 保留策略"></a>2.设置默认的 WORM 保留策略</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc retention set --default governance --days 30 local/worm-bucket</span><br></pre></td></tr></table></figure>
+<p>新上传的对象将在默认保留期内（30 天）不可被删除或修改。</p>
+<h3 id="3-上传文件测试"><a href="#3-上传文件测试" class="headerlink" title="3.上传文件测试"></a>3.上传文件测试</h3><figure class="highlight plaintext"><figcaption><span>alias set local</span><a target="_blank" rel="noopener" href="http://127.0.0.1:9000">minioadmin minioadmin</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mc cp ./report.pdf local/worm-bucket/</span><br><span class="line">尝试删除对象将被拒绝：</span><br><span class="line">mc rm local/worm-bucket/report.pdf</span><br><span class="line"># Error: Object is under governance retention and cannot be deleted</span><br></pre></td></tr></table></figure>
+<h3 id="4-管理员强制删除（仅适用于-Governance-模式）"><a href="#4-管理员强制删除（仅适用于-Governance-模式）" class="headerlink" title="4.管理员强制删除（仅适用于 Governance 模式）"></a>4.管理员强制删除（仅适用于 Governance 模式）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc rm --bypass-governance local/worm-bucket/report.pdf</span><br></pre></td></tr></table></figure>
+<p>此操作需要管理员具备 S3 权限：s3:BypassGovernanceRetention</p>
+<h3 id="5-Compliance-模式（不可绕过）"><a href="#5-Compliance-模式（不可绕过）" class="headerlink" title="5.Compliance 模式（不可绕过）"></a>5.Compliance 模式（不可绕过）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mc retention set --default compliance --days 180 local/worm-bucket</span><br></pre></td></tr></table></figure>
+<p>设置后，即使管理员也无法提前删除对象，只能等待保留期自动到期。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/05/29/caddy/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-06-10 11:17:16
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="worm存储机制">
-        <div class="time-m-d">06-10</div>
-        <div class="title">
-          <a href="/2025/06/10/worm-minio/">
-            <span>worm存储机制</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="为什么我抛弃了 Nginx，转投 Caddy？">
-        <div class="time-m-d">05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/caddy/">
-            <span>为什么我抛弃了 Nginx，转投 Caddy？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="为什么我抛弃了 Postman，转投 Hoppscotch？">
-        <div class="time-m-d">05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/hoppscotch/">
-            <span>为什么我抛弃了 Postman，转投 Hoppscotch？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？">
-        <div class="time-m-d">04-18</div>
-        <div class="title">
-          <a href="/2025/04/18/postgres-default-conf/">
-            <span>PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="驼峰命名（CamelCase）还是下划线命名（snake_case）">
-        <div class="time-m-d">04-14</div>
-        <div class="title">
-          <a href="/2025/04/14/naming-method/">
-            <span>驼峰命名（CamelCase）还是下划线命名（snake_case）</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="聊聊juicefs权限控制">
-        <div class="time-m-d">03-11</div>
-        <div class="title">
-          <a href="/2025/03/11/juicefs-acl/">
-            <span>聊聊juicefs权限控制</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go fsnotify 监听程序无法捕获 vim 修改后的文件？">
-        <div class="time-m-d">03-04</div>
-        <div class="title">
-          <a href="/2025/03/04/go-fsnotify/">
-            <span>go fsnotify 监听程序无法捕获 vim 修改后的文件？</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="关于juicefs删除文件后仍然存在残留临时文件解决">
-        <div class="time-m-d">02-20</div>
-        <div class="title">
-          <a href="/2025/02/20/juicefs-gc/">
-            <span>关于juicefs删除文件后仍然存在残留临时文件解决</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="离线服务器迁移安装docker镜像">
-        <div class="time-m-d">01-10</div>
-        <div class="title">
-          <a href="/2025/01/10/moveImg/">
-            <span>离线服务器迁移安装docker镜像</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="了解Dockerfile，是什么？主要指令？如何使用？">
-        <div class="time-m-d">01-09</div>
-        <div class="title">
-          <a href="/2025/01/09/Dockerfile/">
-            <span>了解Dockerfile，是什么？主要指令？如何使用？</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
-        </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
       
-      <div class="post-item" title="如何理解 AI 对话中的 Token？">
-        <div class="time-m-d">12-06</div>
-        <div class="title">
-          <a href="/2024/12/06/AiToken/">
-            <span>如何理解 AI 对话中的 Token？</span>
-          </a>
-        </div>
-      </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-WORM%EF%BC%9F"><span class="toc-text">什么是 WORM？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-WORM%EF%BC%9F"><span class="toc-text">为什么需要 WORM？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MinIO-%E4%B8%AD%E7%9A%84-WORM-%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="toc-text">MinIO 中的 WORM 实现方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-MinIO-%E4%B8%8A%E5%90%AF%E7%94%A8-WORM"><span class="toc-text">在 MinIO 上启用 WORM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E6%94%AF%E6%8C%81%E5%AF%B9%E8%B1%A1%E9%94%81%E5%AE%9A%E7%9A%84%E6%A1%B6"><span class="toc-text">1.创建支持对象锁定的桶</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E7%9A%84-WORM-%E4%BF%9D%E7%95%99%E7%AD%96%E7%95%A5"><span class="toc-text">2.设置默认的 WORM 保留策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="toc-text">3.上传文件测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%AE%A1%E7%90%86%E5%91%98%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4%EF%BC%88%E4%BB%85%E9%80%82%E7%94%A8%E4%BA%8E-Governance-%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-text">4.管理员强制删除（仅适用于 Governance 模式）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Compliance-%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%8D%E5%8F%AF%E7%BB%95%E8%BF%87%EF%BC%89"><span class="toc-text">5.Compliance 模式（不可绕过）</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="内核ceph_mount流程">
-        <div class="time-m-d">11-21</div>
-        <div class="title">
-          <a href="/2024/11/21/ceph-mount%E5%86%85%E6%A0%B8%E6%B5%81%E7%A8%8B/">
-            <span>内核ceph_mount流程</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="juicefs元数据及数据存储方式">
-        <div class="time-m-d">11-01</div>
-        <div class="title">
-          <a href="/2024/11/01/juicefs%E5%85%83%E6%95%B0%E6%8D%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F/">
-            <span>juicefs元数据及数据存储方式</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go test">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2024/09/24/go-test/">
-            <span>go test</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JuiceFS元数据引擎PostgreSQL">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/JuiceFS%E5%85%83%E6%95%B0%E6%8D%AE%E5%BC%95%E6%93%8EPostgreSQL/">
-            <span>JuiceFS元数据引擎PostgreSQL</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="使用nginx代理，实现扫描二维码查看静态网页功能">
-        <div class="time-m-d">08-27</div>
-        <div class="title">
-          <a href="/2024/08/27/%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E6%89%AB%E6%8F%8F%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%9F%A5%E7%9C%8B%E9%9D%99%E6%80%81%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%83%BD/">
-            <span>使用nginx代理，实现扫描二维码查看静态网页功能</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用JuiceFS">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8JuiceFS/">
-            <span>认识和使用JuiceFS</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="认识和使用minio">
-        <div class="time-m-d">06-13</div>
-        <div class="title">
-          <a href="/2024/06/13/%E8%AE%A4%E8%AF%86%E5%92%8C%E4%BD%BF%E7%94%A8minio/">
-            <span>认识和使用minio</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="prometheus + grafana 监测ceph集群状态">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/prometheus-grafana-%E7%9B%91%E6%B5%8Bceph%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/">
-            <span>prometheus + grafana 监测ceph集群状态</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux网络流量问题排查-UDP丢包">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/Linux%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E4%B8%A2%E5%8C%85/">
-            <span>Linux网络流量问题排查-UDP丢包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ohh">
-        <div class="time-m-d">05-22</div>
-        <div class="title">
-          <a href="/2024/05/22/ohh/">
-            <span>ohh</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -573,6 +495,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + worm%E5%AD%98%E5%82%A8%E6%9C%BA%E5%88%B6 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F06%2F10%2Fworm-minio%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/06/10/worm-minio/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
