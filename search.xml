@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>VMware Service某些服务关闭导致虚拟机开机无法获取IP地址</title>
+      <link href="/2025/10/02/vm-service/"/>
+      <url>/2025/10/02/vm-service/</url>
+      
+        <content type="html"><![CDATA[<h4 id="现象："><a href="#现象：" class="headerlink" title="现象："></a>现象：</h4><p>windows下运行着vmware，有一天发现所有虚拟机启动后全部没了IP地址，设置的虚拟机网络为NAT模式。</p><h4 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h4><p>应该不是虚拟机的问题，此刻想到前些时候由于windows电脑卡顿， 一股脑关闭了了很多自启动的服务，问题关键就在这里！</p><p><code>VMware DHCP Service</code>：负责给虚拟机分配 IP 地址。</p><p><code>VMware NAT Service</code>：负责处理虚拟机进出网络的流量转发。</p><p>这两个服务直接导致NAT服务异常。</p><h4 id="解决："><a href="#解决：" class="headerlink" title="解决："></a>解决：</h4><p><code>win + R</code> -&gt; <code>services.msc</code> -&gt; <code>找到VMware DHCP Service 和 VMware NAT Service右键启用</code> -&gt; <code>重启虚拟机</code></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>worm存储机制</title>
       <link href="/2025/06/10/worm-minio/"/>
       <url>/2025/06/10/worm-minio/</url>
@@ -197,9 +210,9 @@
       
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Ceph </tag>
+            
+            <tag> Linux </tag>
             
             <tag> Kernel </tag>
             

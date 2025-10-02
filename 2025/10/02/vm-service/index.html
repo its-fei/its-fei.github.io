@@ -13,6 +13,11 @@
   
   <title>
     
+      VMware Service某些服务关闭导致虚拟机开机无法获取IP地址 
+      
+      
+      |
+    
      its-fei
   </title>
 
@@ -99,149 +104,124 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="VMware Service某些服务关闭导致虚拟机开机无法获取IP地址">
-        <div class="time-m-d">2025-10-02</div>
-        <div class="title">
-          <a href="/2025/10/02/vm-service/">
-            
-              
-                <span>VMware Service某些服务关闭导致虚拟机开机无法获取IP地址</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">VMware Service某些服务关闭导致虚拟机开机无法获取IP地址</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-10-02 09:21:59
+        </span>
+        
       </div>
-    
-      <div class="post-item" title="worm存储机制">
-        <div class="time-m-d">2025-06-10</div>
-        <div class="title">
-          <a href="/2025/06/10/worm-minio/">
-            
-              
-                <span>worm存储机制</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h4 id="现象："><a href="#现象：" class="headerlink" title="现象："></a>现象：</h4><p>windows下运行着vmware，有一天发现所有虚拟机启动后全部没了IP地址，设置的虚拟机网络为NAT模式。</p>
+<h4 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h4><p>应该不是虚拟机的问题，此刻想到前些时候由于windows电脑卡顿， 一股脑关闭了了很多自启动的服务，问题关键就在这里！</p>
+<p><code>VMware DHCP Service</code>：负责给虚拟机分配 IP 地址。</p>
+<p><code>VMware NAT Service</code>：负责处理虚拟机进出网络的流量转发。</p>
+<p>这两个服务直接导致NAT服务异常。</p>
+<h4 id="解决："><a href="#解决：" class="headerlink" title="解决："></a>解决：</h4><p><code>win + R</code> -&gt; <code>services.msc</code> -&gt; <code>找到VMware DHCP Service 和 VMware NAT Service右键启用</code> -&gt; <code>重启虚拟机</code></p>
+
       </div>
-    
-      <div class="post-item" title="为什么我抛弃了 Nginx，转投 Caddy？">
-        <div class="time-m-d">2025-05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/caddy/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>为什么我抛弃了 Nginx，转投 Caddy？</span>
-              
+              <a href="/2025/06/10/worm-minio/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-10-02 09:21:59
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="为什么我抛弃了 Postman，转投 Hoppscotch？">
-        <div class="time-m-d">2025-05-29</div>
-        <div class="title">
-          <a href="/2025/05/29/hoppscotch/">
-            
-              
-                <span>为什么我抛弃了 Postman，转投 Hoppscotch？</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1%EF%BC%9A"><span class="toc-text">现象：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0%EF%BC%9A"><span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%EF%BC%9A"><span class="toc-text">解决：</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？">
-        <div class="time-m-d">2025-04-18</div>
-        <div class="title">
-          <a href="/2025/04/18/postgres-default-conf/">
-            
-              
-                <span>PostgreSQL 中的“postgres”数据库是做什么的？系统表、全局配置都存在哪里？</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="驼峰命名（CamelCase）还是下划线命名（snake_case）">
-        <div class="time-m-d">2025-04-14</div>
-        <div class="title">
-          <a href="/2025/04/14/naming-method/">
-            
-              
-                <span>驼峰命名（CamelCase）还是下划线命名（snake_case）</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="聊聊juicefs权限控制">
-        <div class="time-m-d">2025-03-11</div>
-        <div class="title">
-          <a href="/2025/03/11/juicefs-acl/">
-            
-              
-                <span>聊聊juicefs权限控制</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="go fsnotify 监听程序无法捕获 vim 修改后的文件？">
-        <div class="time-m-d">2025-03-04</div>
-        <div class="title">
-          <a href="/2025/03/04/go-fsnotify/">
-            
-              
-                <span>go fsnotify 监听程序无法捕获 vim 修改后的文件？</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="关于juicefs删除文件后仍然存在残留临时文件解决">
-        <div class="time-m-d">2025-02-20</div>
-        <div class="title">
-          <a href="/2025/02/20/juicefs-gc/">
-            
-              
-                <span>关于juicefs删除文件后仍然存在残留临时文件解决</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="离线服务器迁移安装docker镜像">
-        <div class="time-m-d">2025-01-10</div>
-        <div class="title">
-          <a href="/2025/01/10/moveImg/">
-            
-              
-                <span>离线服务器迁移安装docker镜像</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-    <span class="page-num">1 / 3</span>
-    
-      <a href="/page/2/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -498,6 +478,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + VMware%20Service%E6%9F%90%E4%BA%9B%E6%9C%8D%E5%8A%A1%E5%85%B3%E9%97%AD%E5%AF%BC%E8%87%B4%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%BC%80%E6%9C%BA%E6%97%A0%E6%B3%95%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F10%2F02%2Fvm-service%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/10/02/vm-service/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
