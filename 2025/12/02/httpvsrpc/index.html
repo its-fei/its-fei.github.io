@@ -13,7 +13,7 @@
   
   <title>
     
-      VMware Service某些服务关闭导致虚拟机开机无法获取IP地址 
+      HTTP与RPC各自适用场景？ 
       
       
       |
@@ -149,28 +149,151 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">VMware Service某些服务关闭导致虚拟机开机无法获取IP地址</div>
+      <div class="post-title">HTTP与RPC各自适用场景？</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-10-02 09:21:59
+          2025-12-02 11:56:13
         </span>
         
       </div>
       <div class="markdown-body">
-        <h4 id="现象："><a href="#现象：" class="headerlink" title="现象："></a>现象：</h4><p>windows下运行着vmware，有一天发现所有虚拟机启动后全部没了IP地址，设置的虚拟机网络为NAT模式。</p>
-<h4 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h4><p>应该不是虚拟机的问题，此刻想到前些时候由于windows电脑卡顿， 一股脑关闭了了很多自启动的服务，问题关键就在这里！</p>
-<p><code>VMware DHCP Service</code>：负责给虚拟机分配 IP 地址。</p>
-<p><code>VMware NAT Service</code>：负责处理虚拟机进出网络的流量转发。</p>
-<p>这两个服务直接导致NAT服务异常。</p>
-<h4 id="解决："><a href="#解决：" class="headerlink" title="解决："></a>解决：</h4><p><code>win + R</code> -&gt; <code>services.msc</code> -&gt; <code>找到VMware DHCP Service 和 VMware NAT Service右键启用</code> -&gt; <code>重启虚拟机</code></p>
+        <h2 id="HTTP-与-RPC-是什么？"><a href="#HTTP-与-RPC-是什么？" class="headerlink" title="HTTP 与 RPC 是什么？"></a>HTTP 与 RPC 是什么？</h2><p><code>HTTP</code>是位于YTCP&#x2F;IP协议栈的应用层协议（超文本传输协议 - HyperText Transfer Protocol）。</p>
+<p><code>RPC</code>是一种抽象机制&#x2F;模式。</p>
+<h2 id="各自适用场景"><a href="#各自适用场景" class="headerlink" title="各自适用场景"></a>各自适用场景</h2><ul>
+<li><p>对外服务、跨平台、多端访问、需要标准化 → 用 HTTP</p>
+</li>
+<li><p>服务间内部调用、要求高性能、高吞吐、低延迟 → 用 RPC</p>
+</li>
+</ul>
+<h2 id="什么时候用HTTP（RESTful-JSON）"><a href="#什么时候用HTTP（RESTful-JSON）" class="headerlink" title="什么时候用HTTP（RESTful&#x2F;JSON）"></a>什么时候用HTTP（RESTful&#x2F;JSON）</h2><h3 id="1-对外提供-API（公网上跑）"><a href="#1-对外提供-API（公网上跑）" class="headerlink" title="1. 对外提供 API（公网上跑）"></a>1. 对外提供 API（公网上跑）</h3><p>例如：</p>
+<p>App 调用你的后端</p>
+<p>Web 前端调用你的服务</p>
+<p>小程序 &#x2F; 桌面端</p>
+<p>第三方合作方</p>
+<p><strong>理由：</strong></p>
+<p>HTTP 是所有平台天然支持的</p>
+<p>JSON 格式通用易调试</p>
+<p>浏览器原生支持</p>
+<p>更容易做文档与调试</p>
+<h3 id="2-需要跨语言、多端、公开标准"><a href="#2-需要跨语言、多端、公开标准" class="headerlink" title="2. 需要跨语言、多端、公开标准"></a>2. 需要跨语言、多端、公开标准</h3><p>iOS &#x2F; Android &#x2F; Web &#x2F; Python &#x2F; Go &#x2F; C++</p>
+<p>第三方厂商接入</p>
+<p>RPC 不方便（要 SDK），但 HTTP 人人都能用。</p>
+<h3 id="3-网络环境复杂，链路不稳定"><a href="#3-网络环境复杂，链路不稳定" class="headerlink" title="3. 网络环境复杂，链路不稳定"></a>3. 网络环境复杂，链路不稳定</h3><p>HTTP 自带：</p>
+<p>重试</p>
+<p>超时</p>
+<p>状态码语义</p>
+<p>代理 &#x2F; 网关支持</p>
+<p>移动网络场景非常依赖。</p>
+<h3 id="4-你需要网关、负载均衡、CDN"><a href="#4-你需要网关、负载均衡、CDN" class="headerlink" title="4. 你需要网关、负载均衡、CDN"></a>4. 你需要网关、负载均衡、CDN</h3><p>HTTP 在基础设施上是最成熟的。</p>
+<h3 id="5-强调资源模型（CRUD-风格）"><a href="#5-强调资源模型（CRUD-风格）" class="headerlink" title="5. 强调资源模型（CRUD 风格）"></a>5. 强调资源模型（CRUD 风格）</h3><p>比如：</p>
+<p>&#x2F;users</p>
+<p>&#x2F;books&#x2F;{id}</p>
+<p>RESTful 感觉更自然。	</p>
+<h2 id="什么时候用-RPC（gRPC-Thrift-TCP-自定义协议）"><a href="#什么时候用-RPC（gRPC-Thrift-TCP-自定义协议）" class="headerlink" title="什么时候用 RPC（gRPC &#x2F; Thrift &#x2F; TCP 自定义协议）"></a>什么时候用 RPC（gRPC &#x2F; Thrift &#x2F; TCP 自定义协议）</h2><h3 id="1-内部微服务之间的通信（最典型）"><a href="#1-内部微服务之间的通信（最典型）" class="headerlink" title="1. 内部微服务之间的通信（最典型）"></a>1. 内部微服务之间的通信（最典型）</h3><p>例如：</p>
+<p>用户服务 → 订单服务</p>
+<p>支付服务 → 风控服务</p>
+<p>推荐服务 → 特征服务</p>
+<p>内部服务调用频次极高，延迟要求严格，需要更高性能。</p>
+<h3 id="2-要求高性能、低延迟"><a href="#2-要求高性能、低延迟" class="headerlink" title="2. 要求高性能、低延迟"></a>2. 要求高性能、低延迟</h3><p>相比 HTTP：</p>
+<table>
+<thead>
+<tr>
+<th align="left">协议</th>
+<th align="left">特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">HTTP&#x2F;JSON</td>
+<td align="left">文本 + 大量 header，序列化慢</td>
+</tr>
+<tr>
+<td align="left">RPC&#x2F;Protobuf</td>
+<td align="left">二进制 + 高效序列化 + 长连接</td>
+</tr>
+</tbody></table>
+<p>性能一般差一个数量级。</p>
+<h3 id="3-需要强类型接口（IDL）"><a href="#3-需要强类型接口（IDL）" class="headerlink" title="3. 需要强类型接口（IDL）"></a>3. 需要强类型接口（IDL）</h3><p>RPC 一般使用 protobuf&#x2F;thrift IDL：</p>
+<p>自动生成服务端和客户端代码</p>
+<p>参数&#x2F;返回值强类型</p>
+<p>减少手写错误</p>
+<p>非常适合集群化、接口多的系统。</p>
+<h3 id="4-内部服务之间-QPS-非常高"><a href="#4-内部服务之间-QPS-非常高" class="headerlink" title="4. 内部服务之间 QPS 非常高"></a>4. 内部服务之间 QPS 非常高</h3><p>例如：</p>
+<p>一个请求要链式调用 10 次内部接口</p>
+<p>推荐&#x2F;广告系统每秒几十万请求</p>
+<p>HTTP 做不动，RPC 才扛得住。</p>
+<h3 id="5-要长连接、双向流"><a href="#5-要长连接、双向流" class="headerlink" title="5. 要长连接、双向流"></a>5. 要长连接、双向流</h3><p>例如 gRPC 支持：</p>
+<p>双向流</p>
+<p>服务端推送</p>
+<p>客户端流</p>
+<p>HTTP&#x2F;JSON 基本不行。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>HTTP</th>
+<th>RPC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>性能</td>
+<td>中等</td>
+<td>极高</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>跨平台兼容性</td>
+<td>非常好</td>
+<td>需要 SDK</td>
+</tr>
+<tr>
+<td>调试难度</td>
+<td>简单（curl&#x2F;浏览器）</td>
+<td>较复杂</td>
+</tr>
+<tr>
+<td>数据格式</td>
+<td>JSON 文本</td>
+<td>Protobuf 等二进制</td>
+</tr>
+<tr>
+<td>连接方式</td>
+<td>短连接为主</td>
+<td>长连接（HTTP&#x2F;2&#x2F;TCP）</td>
+</tr>
+<tr>
+<td>类型安全</td>
+<td>弱</td>
+<td>强</td>
+</tr>
+<tr>
+<td>适用对象</td>
+<td>外部客户端</td>
+<td>内部后端服务</td>
+</tr>
+<tr>
+<td>基础设施支持</td>
+<td>网关&#x2F;CDN&#x2F;缓存完备</td>
+<td>需要自定义</td>
+</tr>
+<tr>
+<td>文档&#x2F;可读性</td>
+<td>极好</td>
+<td>较弱&#x2F;自动生成</td>
+</tr>
+</tbody></table>
+<p><strong>一句话： HTTP 更通用；RPC 更高性能。</strong></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/06/10/worm-minio/" target="_self">
+              <a href="/2025/10/02/vm-service/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -179,16 +302,11 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-10-02 09:21:59
+              2025-12-02 11:56:13
             </span>
             
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2025/12/02/httpvsrpc/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -202,7 +320,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1%EF%BC%9A"><span class="toc-text">现象：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0%EF%BC%9A"><span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%EF%BC%9A"><span class="toc-text">解决：</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-%E4%B8%8E-RPC-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">HTTP 与 RPC 是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E8%87%AA%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">各自适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8HTTP%EF%BC%88RESTful-JSON%EF%BC%89"><span class="toc-text">什么时候用HTTP（RESTful&#x2F;JSON）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%B9%E5%A4%96%E6%8F%90%E4%BE%9B-API%EF%BC%88%E5%85%AC%E7%BD%91%E4%B8%8A%E8%B7%91%EF%BC%89"><span class="toc-text">1. 对外提供 API（公网上跑）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9C%80%E8%A6%81%E8%B7%A8%E8%AF%AD%E8%A8%80%E3%80%81%E5%A4%9A%E7%AB%AF%E3%80%81%E5%85%AC%E5%BC%80%E6%A0%87%E5%87%86"><span class="toc-text">2. 需要跨语言、多端、公开标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E5%A4%8D%E6%9D%82%EF%BC%8C%E9%93%BE%E8%B7%AF%E4%B8%8D%E7%A8%B3%E5%AE%9A"><span class="toc-text">3. 网络环境复杂，链路不稳定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%A0%E9%9C%80%E8%A6%81%E7%BD%91%E5%85%B3%E3%80%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E3%80%81CDN"><span class="toc-text">4. 你需要网关、负载均衡、CDN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%BC%BA%E8%B0%83%E8%B5%84%E6%BA%90%E6%A8%A1%E5%9E%8B%EF%BC%88CRUD-%E9%A3%8E%E6%A0%BC%EF%BC%89"><span class="toc-text">5. 强调资源模型（CRUD 风格）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-RPC%EF%BC%88gRPC-Thrift-TCP-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-text">什么时候用 RPC（gRPC &#x2F; Thrift &#x2F; TCP 自定义协议）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%86%85%E9%83%A8%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%EF%BC%88%E6%9C%80%E5%85%B8%E5%9E%8B%EF%BC%89"><span class="toc-text">1. 内部微服务之间的通信（最典型）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A6%81%E6%B1%82%E9%AB%98%E6%80%A7%E8%83%BD%E3%80%81%E4%BD%8E%E5%BB%B6%E8%BF%9F"><span class="toc-text">2. 要求高性能、低延迟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%9C%80%E8%A6%81%E5%BC%BA%E7%B1%BB%E5%9E%8B%E6%8E%A5%E5%8F%A3%EF%BC%88IDL%EF%BC%89"><span class="toc-text">3. 需要强类型接口（IDL）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E4%B9%8B%E9%97%B4-QPS-%E9%9D%9E%E5%B8%B8%E9%AB%98"><span class="toc-text">4. 内部服务之间 QPS 非常高</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%A6%81%E9%95%BF%E8%BF%9E%E6%8E%A5%E3%80%81%E5%8F%8C%E5%90%91%E6%B5%81"><span class="toc-text">5. 要长连接、双向流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
       
     </div>
   </div>
@@ -490,12 +608,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + VMware%20Service%E6%9F%90%E4%BA%9B%E6%9C%8D%E5%8A%A1%E5%85%B3%E9%97%AD%E5%AF%BC%E8%87%B4%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%BC%80%E6%9C%BA%E6%97%A0%E6%B3%95%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80 + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F10%2F02%2Fvm-service%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + HTTP%E4%B8%8ERPC%E5%90%84%E8%87%AA%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F12%2F02%2Fhttpvsrpc%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/10/02/vm-service/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/12/02/httpvsrpc/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
