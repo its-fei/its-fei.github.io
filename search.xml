@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>c++ header-only library</title>
+      <link href="/2025/12/03/header-only-library/"/>
+      <url>/2025/12/03/header-only-library/</url>
+      
+        <content type="html"><![CDATA[<h2 id="1-什么是-Header-only-Library？"><a href="#1-什么是-Header-only-Library？" class="headerlink" title="1. 什么是 Header-only Library？"></a>1. 什么是 Header-only Library？</h2><p>Header-only 库只提供 <code>.h/.hpp</code> 文件，没有 <code>.cpp</code>，也不生成<br><code>.a/.so</code>。使用时只需：</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;xxx.hpp&quot;</span></span></span><br></pre></td></tr></table></figure><p>常见例子包括：</p><ul><li><p>Boost 部分库（Asio、Spirit 等）</p></li><li><p>fmt（header-only版本）</p></li><li><p>Catch2</p></li><li><p>nlohmann&#x2F;json</p></li></ul><hr><h2 id="2-为什么只引入头文件就能用？"><a href="#2-为什么只引入头文件就能用？" class="headerlink" title="2. 为什么只引入头文件就能用？"></a>2. 为什么只引入头文件就能用？</h2><h3 id="原理-1：模板必须放在头文件中"><a href="#原理-1：模板必须放在头文件中" class="headerlink" title="原理 1：模板必须放在头文件中"></a>原理 1：模板必须放在头文件中</h3><p>模板代码只有在实例化时才会生成实际函数&#x2F;类，因此模板实现必须放在头文件中。</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T v)</span> </span>&#123; data.<span class="built_in">push_back</span>(v); &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::vector&lt;T&gt; data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="原理-2：inline-防止多重定义"><a href="#原理-2：inline-防止多重定义" class="headerlink" title="原理 2：inline 防止多重定义"></a>原理 2：inline 防止多重定义</h3><p>头文件被多个源文件包含，如果函数没有被 <code>inline</code> 修饰会产生 ODR 冲突。</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">int</span> <span class="title">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123; <span class="keyword">return</span> a + b; &#125;</span><br></pre></td></tr></table></figure><h3 id="原理-3：constexpr-static-函数也适合写在头里"><a href="#原理-3：constexpr-static-函数也适合写在头里" class="headerlink" title="原理 3：constexpr &#x2F; static 函数也适合写在头里"></a>原理 3：constexpr &#x2F; static 函数也适合写在头里</h3><p>这些关键字帮助避免符号冲突。</p><h3 id="原理-4：C-17-inline-变量"><a href="#原理-4：C-17-inline-变量" class="headerlink" title="原理 4：C++17 inline 变量"></a>原理 4：C++17 inline 变量</h3><p>允许定义头文件中的全局变量：</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="type">int</span> global_value = <span class="number">10</span>;</span><br></pre></td></tr></table></figure><hr><h2 id="3-为什么不需要-a-或-so？"><a href="#3-为什么不需要-a-或-so？" class="headerlink" title="3. 为什么不需要 .a 或 .so？"></a>3. 为什么不需要 .a 或 .so？</h2><p>因为 header-only 库的代码是在 <strong>使用者编译阶段</strong>生成的，而不是预编译为目标文件。</p><p>传统库：</p><pre><code>库.cpp → .o → .a / .so → 链接</code></pre><p>Header-only：</p><pre><code>用户.cpp + 库.hpp → 一起编译 → 可执行文件</code></pre><hr><h2 id="4-哪些库不能只靠头文件使用？"><a href="#4-哪些库不能只靠头文件使用？" class="headerlink" title="4. 哪些库不能只靠头文件使用？"></a>4. 哪些库不能只靠头文件使用？</h2><p>以下情况一般无法 header-only： </p><ul><li>大量非模板函数 - 需要隐藏实现 </li><li>使用汇编优化 - 依赖系统库 - 提供 C 接口</li></ul><p>例如： - OpenSSL、OpenCV、gRPC 等都必须链接。</p><hr><h2 id="5-如何判断库是否是-header-only？"><a href="#5-如何判断库是否是-header-only？" class="headerlink" title="5. 如何判断库是否是 header-only？"></a>5. 如何判断库是否是 header-only？</h2><table><thead><tr><th>判断方式</th><th>结论</th></tr></thead><tbody><tr><td>有没有 <code>.cpp</code>  ？</td><td>有 → 要链接</td></tr><tr><td>文档是否写 header-only？</td><td>写了 → 是</td></tr><tr><td>是否大量模板？</td><td>可能是</td></tr><tr><td>是否只需 include 就能用？</td><td>大概率是</td></tr></tbody></table><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote><p>C++<br>只包含头文件就能使用，是因为库将所有实现写入模板、inline、constexpr，使编译器在用户代码编译阶段直接生成最终代码，不需要预编译静态或动态库。</p></blockquote>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> c++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>HTTP与RPC各自适用场景？</title>
       <link href="/2025/12/02/httpvsrpc/"/>
       <url>/2025/12/02/httpvsrpc/</url>
@@ -223,9 +242,9 @@
       
         <tags>
             
-            <tag> Ceph </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Ceph </tag>
             
             <tag> Kernel </tag>
             
