@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>初识推荐系统</title>
+      <link href="/2025/12/23/recom-system/"/>
+      <url>/2025/12/23/recom-system/</url>
+      
+        <content type="html"><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>当我们打开短视频、新闻 App、电商平台时，首页往往早已替我们准备好了一份“专属内容列表”。你刷到的视频、看到的商品、读到的文章，很大程度上并不是随机的，而是由一个复杂却高效的系统 - <strong>推荐系统</strong>（Recommender System）计算得出。</p><h3 id="一、推荐系统解决什么问题？"><a href="#一、推荐系统解决什么问题？" class="headerlink" title="一、推荐系统解决什么问题？"></a>一、推荐系统解决什么问题？</h3><p>在海量内容中，帮用户找到“最可能感兴趣的那一小部分”。</p><p><strong>面临的问题：</strong></p><ul><li>内容极多（百万级视频、商品、文章）</li><li>用户注意力有限</li><li>用户需求往往是隐式的、不明确的</li></ul><p>推荐系统的目标并不是“推荐最好的内容”，而是<strong>在合适的时间，把合适的内容，推荐给合适的用户。</strong></p><h3 id="二、一个最基本的推荐系统长什么样？"><a href="#二、一个最基本的推荐系统长什么样？" class="headerlink" title="二、一个最基本的推荐系统长什么样？"></a>二、一个最基本的推荐系统长什么样？</h3><p>召回 -&gt; 排序 -&gt; 策略</p><h4 id="1、召回"><a href="#1、召回" class="headerlink" title="1、召回"></a>1、召回</h4><p>从海量内容中“捞一批可能相关的”，目标是快速缩小候选集合，从千万级-&gt;几千。</p><p><strong>召回方式：</strong></p><blockquote><p>基于行为的召回：看过类似内容的用户，也看了什么</p></blockquote><blockquote><p>基于内容的召回：视频标签、商品属性、文章主题相似</p></blockquote><blockquote><p>基于规则的召回：热门、最新、同城</p></blockquote><h4 id="2、排序"><a href="#2、排序" class="headerlink" title="2、排序"></a>2、排序</h4><p>给每个候选内容“打分”。</p><p>召回只是“可能相关”，真正决定展示顺序的是排序模型。</p><p>排序模型的核心问题是：<strong>这个内容，对当前用户“有多大概率会发生正向行为？</strong> 比如会不会点击？会不会看完？会不会点赞 &#x2F; 购买？</p><h4 id="排序模型的输入是什么？"><a href="#排序模型的输入是什么？" class="headerlink" title="排序模型的输入是什么？"></a>排序模型的输入是什么？</h4><p>排序模型并不“直接理解人”，而是看特征：</p><ul><li><p>用户特征<br>年龄段、兴趣偏好、历史行为统计</p></li><li><p>内容特征<br>标签、作者、热度、质量分</p></li><li><p>上下文特征<br>时间、地点、设备、网络</p></li></ul><p>模型输出一个 score（评分），按分数从高到低排序。</p><h4 id="3、策略"><a href="#3、策略" class="headerlink" title="3、策略"></a>3、策略</h4><p>不只是“分高就上”。</p><p>如果只按分数排序，可能会出现问题：</p><ul><li>内容过于单一</li><li>新内容没机会</li><li>商业目标无法保证</li></ul><p>所以最后还会有一层 策略调整：</p><ul><li>多样性控制（不要全是同一类型）</li><li>新内容探索（冷启动）</li><li>商业策略（广告、扶持内容）</li></ul><h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>当然，推荐系统远不止这些流程，仅先做一个大概理解。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>c++ header-only library</title>
       <link href="/2025/12/03/header-only-library/"/>
       <url>/2025/12/03/header-only-library/</url>
