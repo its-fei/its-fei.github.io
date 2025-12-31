@@ -13,7 +13,7 @@
   
   <title>
     
-      初识推荐系统 
+      gdb速查手册 
       
       
       |
@@ -149,70 +149,55 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">初识推荐系统</div>
+      <div class="post-title">gdb速查手册</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-12-24 14:46:36
+          2025-12-31 15:44:37
         </span>
         
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Linux/" title="Linux">
+                    #Linux
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Tools/" title="Tools">
+                    #Tools
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
       <div class="markdown-body">
-        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>当我们打开短视频、新闻 App、电商平台时，首页往往早已替我们准备好了一份“专属内容列表”。你刷到的视频、看到的商品、读到的文章，很大程度上并不是随机的，而是由一个复杂却高效的系统 - <strong>推荐系统</strong>（Recommender System）计算得出。</p>
-<h3 id="一、推荐系统解决什么问题？"><a href="#一、推荐系统解决什么问题？" class="headerlink" title="一、推荐系统解决什么问题？"></a>一、推荐系统解决什么问题？</h3><p>在海量内容中，帮用户找到“最可能感兴趣的那一小部分”。</p>
-<p><strong>面临的问题：</strong></p>
-<ul>
-<li>内容极多（百万级视频、商品、文章）</li>
-<li>用户注意力有限</li>
-<li>用户需求往往是隐式的、不明确的</li>
-</ul>
-<p>推荐系统的目标并不是“推荐最好的内容”，而是<strong>在合适的时间，把合适的内容，推荐给合适的用户。</strong></p>
-<h3 id="二、一个最基本的推荐系统长什么样？"><a href="#二、一个最基本的推荐系统长什么样？" class="headerlink" title="二、一个最基本的推荐系统长什么样？"></a>二、一个最基本的推荐系统长什么样？</h3><p>召回 -&gt; 排序 -&gt; 策略</p>
-<h4 id="1、召回"><a href="#1、召回" class="headerlink" title="1、召回"></a>1、召回</h4><p>从海量内容中“捞一批可能相关的”，目标是快速缩小候选集合，从千万级-&gt;几千。</p>
-<p><strong>召回方式：</strong></p>
-<blockquote>
-<p>基于行为的召回：看过类似内容的用户，也看了什么</p>
-</blockquote>
-<blockquote>
-<p>基于内容的召回：视频标签、商品属性、文章主题相似</p>
-</blockquote>
-<blockquote>
-<p>基于规则的召回：热门、最新、同城</p>
-</blockquote>
-<h4 id="2、排序"><a href="#2、排序" class="headerlink" title="2、排序"></a>2、排序</h4><p>给每个候选内容“打分”。</p>
-<p>召回只是“可能相关”，真正决定展示顺序的是排序模型。</p>
-<p>排序模型的核心问题是：<strong>这个内容，对当前用户“有多大概率会发生正向行为？</strong> 比如会不会点击？会不会看完？会不会点赞 &#x2F; 购买？</p>
-<h4 id="排序模型的输入是什么？"><a href="#排序模型的输入是什么？" class="headerlink" title="排序模型的输入是什么？"></a>排序模型的输入是什么？</h4><p>排序模型并不“直接理解人”，而是看特征：</p>
-<ul>
-<li><p>用户特征<br>年龄段、兴趣偏好、历史行为统计</p>
-</li>
-<li><p>内容特征<br>标签、作者、热度、质量分</p>
-</li>
-<li><p>上下文特征<br>时间、地点、设备、网络</p>
-</li>
-</ul>
-<p>模型输出一个 score（评分），按分数从高到低排序。</p>
-<h4 id="3、策略"><a href="#3、策略" class="headerlink" title="3、策略"></a>3、策略</h4><p>不只是“分高就上”。</p>
-<p>如果只按分数排序，可能会出现问题：</p>
-<ul>
-<li>内容过于单一</li>
-<li>新内容没机会</li>
-<li>商业目标无法保证</li>
-</ul>
-<p>所以最后还会有一层 策略调整：</p>
-<ul>
-<li>多样性控制（不要全是同一类型）</li>
-<li>新内容探索（冷启动）</li>
-<li>商业策略（广告、扶持内容）</li>
-</ul>
-<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>当然，推荐系统远不止这些流程，仅先做一个大概理解。</p>
+        <h4 id="写在前面："><a href="#写在前面：" class="headerlink" title="写在前面："></a>写在前面：</h4><p>有段时间没用gdb了，总是忘性很大，此次边查看边记录一下，方便后续使用。</p>
+<h4 id="1、启动GDB"><a href="#1、启动GDB" class="headerlink" title="1、启动GDB"></a>1、启动GDB</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#启动程序(假设程序名为 your_program)</span><br><span class="line">gdb ./your_program</span><br><span class="line"></span><br><span class="line">#或者attach到正在运行的进程</span><br><span class="line">gdb -p &lt;进程PID&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="2、设置断点"><a href="#2、设置断点" class="headerlink" title="2、设置断点"></a>2、设置断点</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">b   设置断点</span><br><span class="line">c   继续执行</span><br><span class="line">客户端请求时，服务端在断点处停下</span><br><span class="line"></span><br><span class="line"># 查看所有断点</span><br><span class="line">info breakpoints</span><br><span class="line"># 或简写</span><br><span class="line">info b</span><br><span class="line">i b</span><br><span class="line"></span><br><span class="line"># 禁用某个断点</span><br><span class="line">disable 1</span><br><span class="line"></span><br><span class="line"># 启用某个断点</span><br><span class="line">enable 1</span><br><span class="line"></span><br><span class="line"># 删除某个断点</span><br><span class="line">delete 1</span><br><span class="line"># 或</span><br><span class="line">d 1</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、逐行排查"><a href="#3、逐行排查" class="headerlink" title="3、逐行排查"></a>3、逐行排查</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">n      # next: 执行下一行(不进入函数内部)</span><br><span class="line">s      # step: 执行下一行(会进入函数内部)</span><br><span class="line">c      # continue: 继续执行到下一个断点</span><br><span class="line">p      # print: 打印变量</span><br><span class="line">bt     # backtrace: 查看调用栈</span><br><span class="line">l      # list: 显示当前代码</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># up 1 让你可以查看调用当前函数的上层函数的上下文和变量，但不会改变程序执行状态，只是改变你查看的视角。</span><br><span class="line"># 向上移动1层调用栈</span><br><span class="line">up 1</span><br><span class="line"></span><br><span class="line"># 向下移动1层调用栈</span><br><span class="line">down 1</span><br><span class="line"></span><br><span class="line"># 查看当前调用栈</span><br><span class="line">bt        # backtrace，显示完整调用栈</span><br><span class="line">frame     # 显示当前栈帧信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、常用快捷操作"><a href="#4、常用快捷操作" class="headerlink" title="4、常用快捷操作"></a>4、常用快捷操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前代码位置</span><br><span class="line">(gdb) l                    # list: 显示当前行附近的代码</span><br><span class="line">(gdb) l 150                # 显示第150行附近的代码</span><br><span class="line"></span><br><span class="line"># 查看调用栈</span><br><span class="line">(gdb) bt                   # 查看完整调用栈</span><br><span class="line">(gdb) frame 1              # 切换到上一层调用栈</span><br><span class="line">(gdb) info locals          # 查看当前函数的所有局部变量</span><br><span class="line">(gdb) info args            # 查看函数参数</span><br><span class="line"></span><br><span class="line"># 直接执行到某一行</span><br><span class="line">(gdb) until 160            # 执行到第160行</span><br><span class="line"></span><br><span class="line"># 跳过循环</span><br><span class="line">(gdb) until                # 执行完当前循环</span><br><span class="line"></span><br><span class="line"># 退出函数</span><br><span class="line">(gdb) finish               # 执行完当前函数并返回</span><br></pre></td></tr></table></figure>
+<h4 id="5、退出"><a href="#5、退出" class="headerlink" title="5、退出"></a>5、退出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">quit                 # 退出GDB</span><br><span class="line">q                    # 简写</span><br><span class="line"># 如果程序还在运行，会提示确认</span><br><span class="line"># 强制退出（不提示）</span><br><span class="line">quit -y</span><br><span class="line"></span><br><span class="line">#结束当前程序执行</span><br><span class="line">kill                 # 杀死正在调试的程序</span><br><span class="line">k                    # 简写</span><br><span class="line"># GDB本身不退出，可以重新run</span><br><span class="line"></span><br><span class="line">continue             # 继续执行直到结束或下一个断点</span><br><span class="line">c                    # 简写</span><br><span class="line"></span><br><span class="line">finish               # 执行完当前函数并返回</span><br><span class="line">fin                  # 简写</span><br><span class="line"></span><br><span class="line">until                # 执行到当前循环结束</span><br><span class="line">u                    # 简写</span><br><span class="line"></span><br><span class="line">until &lt;line&gt;         # 执行到指定行</span><br><span class="line">u 100                # 执行到第100行</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="6、快捷指令"><a href="#6、快捷指令" class="headerlink" title="6、快捷指令"></a>6、快捷指令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+D               # 等同于quit（需要按两次）</span><br><span class="line">Ctrl+C               # 中断程序执行（进入GDB提示符）</span><br></pre></td></tr></table></figure>
+
+
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/12/03/header-only-library/" target="_self">
+              <a href="/2025/12/23/recom-system/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -221,16 +206,28 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-12-24 14:46:36
+              2025-12-31 15:44:37
             </span>
             
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Linux/" title="Linux">
+                        #Linux
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Tools/" title="Tools">
+                        #Tools
+                      </a>
+                    </span>
+                    
+                  </span>
+              
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2025/12/31/gdb-usage/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -244,7 +241,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">一、推荐系统解决什么问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%80%E4%B8%AA%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7%EF%BC%9F"><span class="toc-text">二、一个最基本的推荐系统长什么样？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%8F%AC%E5%9B%9E"><span class="toc-text">1、召回</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%8E%92%E5%BA%8F"><span class="toc-text">2、排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%92%E5%BA%8F%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%BE%93%E5%85%A5%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">排序模型的输入是什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E7%AD%96%E7%95%A5"><span class="toc-text">3、策略</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2%EF%BC%9A"><span class="toc-text">写在前面：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E5%90%AF%E5%8A%A8GDB"><span class="toc-text">1、启动GDB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E8%AE%BE%E7%BD%AE%E6%96%AD%E7%82%B9"><span class="toc-text">2、设置断点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E9%80%90%E8%A1%8C%E6%8E%92%E6%9F%A5"><span class="toc-text">3、逐行排查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C"><span class="toc-text">4、常用快捷操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E9%80%80%E5%87%BA"><span class="toc-text">5、退出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81%E5%BF%AB%E6%8D%B7%E6%8C%87%E4%BB%A4"><span class="toc-text">6、快捷指令</span></a></li></ol>
       
     </div>
   </div>
@@ -532,12 +529,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%88%9D%E8%AF%86%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F12%2F23%2Frecom-system%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + gdb%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C + '&url=' + https%3A%2F%2Fits-fei.github.io%2F2025%2F12%2F31%2Fgdb-usage%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/12/23/recom-system/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://its-fei.github.io/2025/12/31/gdb-usage/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
